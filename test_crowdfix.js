@@ -937,6 +937,53 @@ test('State Integrity: loadIssues guarantees active seed demo issues', () => {
   assert(js.includes("existing.status = 'Open'"), 'Missing auto-restoration of seed issue status in loadIssues');
 });
 
+console.log('\n⚡ Official Speechmatics Realtime WebSocket Engine');
+
+test('Speechmatics: SpeechmaticsRealtimeClient class defined in app.js', () => {
+  assert(js.includes('class SpeechmaticsRealtimeClient'), 'Missing SpeechmaticsRealtimeClient class in app.js');
+});
+
+test('Speechmatics: Target endpoint wss://eu2.rt.speechmatics.com/v2 configured', () => {
+  assert(js.includes('wss://eu2.rt.speechmatics.com/v2'), 'Missing official Speechmatics WebSocket endpoint in app.js');
+});
+
+test('Speechmatics: StartRecognition message schema matches official v2 protocol', () => {
+  assert(js.includes("message: 'StartRecognition'"), 'Missing StartRecognition message in WebSocket handshake');
+  assert(js.includes("operating_point: this.model === 'standard' ? 'standard' : 'enhanced'"), 'Missing operating_point model configuration');
+  assert(js.includes("encoding: 'pcm_s16le'"), 'Missing pcm_s16le raw audio format');
+  assert(js.includes("sample_rate: 16000"), 'Missing 16000Hz sample rate requirement');
+});
+
+test('Speechmatics: 16kHz PCM downsampling function defined and converts audio buffers', () => {
+  assert(js.includes('function downsampleBuffer('), 'Missing downsampleBuffer function in app.js');
+  // Test downsampling logic
+  const dummyBuffer = new Float32Array([0, 0.5, 1.0, -0.5, -1.0]);
+  const downsampleStart = js.indexOf('function downsampleBuffer');
+  const downsampleEnd = js.indexOf('class SpeechmaticsRealtimeClient', downsampleStart);
+  eval(js.slice(downsampleStart, downsampleEnd));
+  const pcm = downsampleBuffer(dummyBuffer, 16000, 16000);
+  assert(pcm.byteLength === 10, 'Expected 10 bytes for 5 samples of 16-bit PCM');
+});
+
+test('Speechmatics: Models enhanced, standard, and melia1 supported in options', () => {
+  assert(html.includes('value="enhanced"'), 'Missing enhanced model option in HTML');
+  assert(html.includes('value="standard"'), 'Missing standard model option in HTML');
+  assert(html.includes('value="melia1"'), 'Missing melia1 model option in HTML');
+});
+
+test('Speechmatics: Configuration modal and settings triggers wired in HTML & JS', () => {
+  assert(html.includes('id="speechmaticsModal"'), 'Missing speechmaticsModal in index.html');
+  assert(html.includes('id="speechmaticsApiKeyInput"'), 'Missing speechmaticsApiKeyInput in index.html');
+  assert(html.includes('id="btnOpenSpeechmaticsConfig"'), 'Missing btnOpenSpeechmaticsConfig in index.html');
+  assert(js.includes('#btnOpenSpeechmaticsConfig'), 'Missing btnOpenSpeechmaticsConfig listener in app.js');
+  assert(js.includes('#btnSaveSpeechmaticsConfig'), 'Missing btnSaveSpeechmaticsConfig listener in app.js');
+});
+
+test('Speechmatics: Graceful fallback to native speech / 1-tap demo prompts preserved', () => {
+  assert(js.includes('startNativeSpeechRecognition();'), 'Missing native speech fallback');
+  assert(js.includes('startSpeechmaticsSimulation('), 'Missing simulation fallback');
+});
+
 
 
 // ─────────────────────────────────────────────

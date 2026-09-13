@@ -1,0 +1,8 @@
+# Local secrets & environment configuration
+config.js
+.env
+.env.local
+
+# Operating System Files
+Thumbs.db
+.DS_Store

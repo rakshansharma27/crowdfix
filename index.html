@@ -96,7 +96,7 @@
                 <span class="kbd-hint" title="Press R to open report modal">press <kbd>R</kbd></span>
               </div>
               <p class="hero-tech-note">
-                <strong>Engine:</strong> Speechmatics handles speech understanding input; our civic engine structures and clusters the reports.
+                <strong>Engine:</strong> Speechmatics handles speech understanding input (<span id="heroModelLabel">Enhanced Model · Live WS</span>); our civic engine structures and clusters the reports.
               </p>
 
               <!-- HERO SPEECHMATICS TELEMETRY HUD (LIVE DURING MAIN VOICE INTERACTION) -->
@@ -382,10 +382,15 @@
           </div>
         </div>
 
-        <!-- Architectural clarification -->
-        <div class="pipeline-explainer">
-          <span class="pipeline-icon">ℹ</span>
-          <span>Speechmatics handles speech understanding input (English & Hinglish); our civic engine structures and clusters the reports.</span>
+        <!-- Architectural clarification & Speechmatics API Settings -->
+        <div class="pipeline-explainer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="pipeline-icon">⚡</span>
+            <span>Speechmatics Realtime Engine: <strong id="activeModelLabel">Enhanced Model</strong></span>
+          </div>
+          <button type="button" id="btnOpenSpeechmaticsConfig" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:var(--blue);border-radius:6px;padding:3px 8px;font-size:0.75rem;cursor:pointer;white-space:nowrap;">
+            ⚙ API &amp; Model
+          </button>
         </div>
 
         <!-- Microphone Recording Box -->
@@ -715,9 +720,59 @@
       </div>
     </div>
 
+    <!-- SPEECHMATICS API & MODEL CONFIGURATION MODAL -->
+    <div class="modal-backdrop" id="speechmaticsModal" hidden>
+      <div class="auth-modal" style="max-width: 520px; width: 100%;">
+        <button class="close-button" id="closeSpeechmaticsModal" aria-label="Close modal">×</button>
+        <div class="auth-brand"><span class="brand-mark">⚡</span> Speechmatics Voice AI</div>
+        <p class="eyebrow accent">REALTIME ENGINE CONFIGURATION</p>
+        <h2>Speechmatics Settings</h2>
+        <p class="modal-intro">Configure official Realtime WebSocket API (v2) and active model selection.</p>
+
+        <div style="background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); padding: 14px; border-radius: 12px; font-size: 0.82rem; color: var(--ink-soft); line-height: 1.5; margin-bottom: 18px;">
+          <strong style="color: var(--blue); display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span>⚡</span> Realtime WebSocket Engine Active
+          </strong>
+          Microphone audio streams directly to <code>wss://eu2.rt.speechmatics.com/v2</code> using 16kHz PCM audio frames. If no key is present, CrowdFix seamlessly uses browser speech recognition with 1-tap demo prompts.
+        </div>
+
+        <form id="speechmaticsConfigForm" onsubmit="event.preventDefault();">
+          <label for="speechmaticsApiKeyInput">Speechmatics API Key
+            <input id="speechmaticsApiKeyInput" type="password" placeholder="s0omciw1B9h0UI4RzDLLnMIxInmPHcuj" autocomplete="off" style="font-family: monospace; font-size: 0.85rem;" />
+          </label>
+
+          <label for="speechmaticsModelSelect" style="margin-top: 14px;">Speech-to-Text Model
+            <select id="speechmaticsModelSelect" class="small-select" style="width: 100%; margin-top: 6px; padding: 11px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--cream); font-size: 13.5px; color: var(--ink);">
+              <option value="enhanced" selected>Enhanced — Highest accuracy for Realtime (Recommended)</option>
+              <option value="standard">Standard — Fastest turnaround &amp; low latency</option>
+              <option value="melia1">Melia 1 — Multilingual code-switching (Batch / Preview)</option>
+            </select>
+          </label>
+
+          <label for="speechmaticsLangSelect" style="margin-top: 14px;">Language &amp; Dialect
+            <select id="speechmaticsLangSelect" class="small-select" style="width: 100%; margin-top: 6px; padding: 11px 14px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--cream); font-size: 13.5px; color: var(--ink);">
+              <option value="en" selected>English &amp; Hinglish (en / Indian English)</option>
+              <option value="hi">Hindi (hi)</option>
+            </select>
+          </label>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
+            <button type="button" class="secondary-button small" id="btnSpeechmaticsClearKey" style="flex: 1;">
+              Use Demo Mode
+            </button>
+            <button type="button" class="primary-button small" id="btnSaveSpeechmaticsConfig" style="flex: 1;">
+              Save &amp; Connect <span>→</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Toast Notifications -->
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <!-- Optional local configuration (ignored by git for security) -->
+    <script src="config.js" onerror="/* config.js not found in git/production; fallback active */"></script>
     <script src="app.js"></script>
   </body>
 </html>
