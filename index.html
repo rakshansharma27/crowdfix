@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CrowdFix — Turn voices into action</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <!-- Leaflet Interactive Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">✦</span>
+          <span>CrowdFix</span>
+        </div>
+        <p class="sidebar-label">CIVIC OPERATIONS</p>
+        <nav id="sidebarNav">
+          <button class="nav-item active" data-view="overview">
+            <span>⌂</span> Overview
+          </button>
+          <button class="nav-item" data-view="reports">
+            <span>◉</span> Live reports <b id="sidebarReportCount">3</b>
+          </button>
+          <button class="nav-item" data-view="clusters">
+            <span>▦</span> Issue clusters <b id="sidebarClusterCount">3</b>
+          </button>
+          <button class="nav-item" data-view="resolved">
+            <span>✓</span> Resolved <b id="sidebarResolvedCount">1</b>
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="role-badge-card" id="roleBadgeCard">
+            <span class="pulse-dot"></span>
+            <div>
+              <strong id="sidebarRoleTitle">Resident Mode</strong>
+              <small id="sidebarRoleDesc">Tap profile to switch role</small>
+            </div>
+          </div>
+          <button class="profile" id="profileTrigger" title="Click to manage account or switch roles">
+            <span class="avatar" id="sidebarAvatar">RS</span>
+            <span>
+              <strong id="sidebarUserName">Rakshan</strong>
+              <small id="sidebarUserRole">Resident</small>
+            </span>
+            <span class="dots">•••</span>
+          </button>
+        </div>
+      </aside>
+      <!-- Mobile sidebar overlay backdrop -->
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+      <!-- Main Application Surface -->
+      <main class="main-content">
+        <!-- Top Navigation Bar -->
+        <header class="topbar">
+          <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open navigation menu" title="Open navigation">☰</button>
+          <div>
+            <p class="eyebrow" id="topbarDate">LOADING DATE…</p>
+            <h1 id="topbarGreeting">Good evening, <span>Rakshan</span> ✦</h1>
+          </div>
+          <div class="top-actions">
+            <button class="location-pill" id="locationPill" title="Location privacy settings">
+              <span class="loc-dot">⌖</span> <span id="locationPillText">Locating area…</span>
+            </button>
+            <span class="live-status"><i></i> Live network</span>
+            <button class="icon-button" id="helpButton" title="About CrowdFix & Architecture">?</button>
+            <button class="avatar" id="topbarAvatar" title="Open user profile & role switcher">RS</button>
+          </div>
+        </header>
+
+        <!-- VIEW 1: OVERVIEW DASHBOARD -->
+        <div id="viewOverview" class="view-panel active">
+          <section class="hero-grid">
+            <div class="hero-copy">
+              <p class="eyebrow accent">COMMUNITY EVIDENCE GRAPH</p>
+              <h2>Small voices.<br /><em>Visible change.</em></h2>
+              <p>Turn everyday voice reports into collective evidence—and collective evidence into action.</p>
+              <div class="hero-buttons">
+                <button class="primary-button" id="openReport">
+                  <span class="mic-icon">●</span> Report an issue <span>→</span>
+                </button>
+                <button class="secondary-button" id="heroQuickDemo">
+                  <span>⚡</span> Quick Voice Demo
+                </button>
+                <span class="kbd-hint" title="Press R to open report modal">press <kbd>R</kbd></span>
+              </div>
+              <p class="hero-tech-note">
+                <strong>Engine:</strong> Speechmatics handles speech understanding input; our civic engine structures and clusters the reports.
+              </p>
+            </div>
+            <div class="hero-orbit" aria-label="Community evidence visualization">
+              <div class="orbit orbit-one"></div>
+              <div class="orbit orbit-two"></div>
+              <div class="orbit orbit-three"></div>
+              <div class="orbit-center">
+                <strong id="heroReportCount">12</strong>
+                <small>connected reports</small>
+              </div>
+              <span class="node node-a" title="Road Safety">✦</span>
+              <span class="node node-b" title="Cleanliness">●</span>
+              <span class="node node-c" title="Public Lighting">▰</span>
+              <span class="node node-d" title="Water & Sanitation">▲</span>
+            </div>
+          </section>
+
+          <!-- Key Metrics -->
+          <section class="stats-row">
+            <div class="stat-card">
+              <span class="stat-icon orange">◉</span>
+              <div>
+                <strong id="statTotalReports">24</strong>
+                <small>Total reports filed</small>
+              </div>
+              <span class="trend">+18% live</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon purple">⌁</span>
+              <div>
+                <strong id="statActiveClusters">3</strong>
+                <small>Active issue clusters</small>
+              </div>
+              <span class="trend neutral">Merged</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon green">✓</span>
+              <div>
+                <strong id="statResolvedRate">88%</strong>
+                <small>Community resolved</small>
+              </div>
+              <span class="trend">+6% SLA</span>
+            </div>
+          </section>
+
+          <!-- Grid: Priority Queue & Interactive Map -->
+          <section class="content-grid">
+            <!-- Left: Priority Queue -->
+            <div class="section-panel issue-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">PRIORITY QUEUE</p>
+                  <h3>What needs attention</h3>
+                </div>
+                <div class="panel-actions">
+                  <select id="categoryFilter" class="small-select" aria-label="Filter priority queue by category">
+                    <option value="all">All categories</option>
+                    <option value="ROAD SAFETY">Road Safety</option>
+                    <option value="CLEANLINESS">Cleanliness</option>
+                    <option value="PUBLIC LIGHTING">Lighting</option>
+                    <option value="WATER & SEWAGE">Water & Sewage</option>
+                    <option value="TRAFFIC & TRANSIT">Traffic & Transit</option>
+                  </select>
+                  <button class="text-button" id="viewAllIssuesBtn">View all →</button>
+                </div>
+              </div>
+              <div class="issue-list" id="issueList">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Right: Interactive Leaflet Map -->
+            <div class="section-panel map-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">LIVE AREA VIEW</p>
+                  <h3>Reports near you</h3>
+                </div>
+                <div class="map-controls-row">
+                  <span class="privacy-tag" title="Exact user locations are obfuscated for citizen privacy">
+                    🔒 Location Obfuscated
+                  </span>
+                  <button class="map-filter" id="recenterMapBtn" title="Center map on community area">
+                    ⌖ Recenter
+                  </button>
+                </div>
+              </div>
+              <div class="interactive-map-wrapper">
+                <div id="osmMap" class="osm-map-container" role="region" aria-label="Interactive map of civic issues"></div>
+                <div class="map-overlay-legend">
+                  <span><i class="orange-dot"></i> High Priority</span>
+                  <span><i class="purple-dot"></i> Medium</span>
+                  <span><i class="green-dot"></i> Resolved</span>
+                </div>
+              </div>
+              <div class="osm-attribution-bar">
+                <span>Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors</span>
+                <span class="privacy-note-pill">No exact resident GPS published</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Bottom: Recent Community Voices -->
+          <section class="recent-section">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">COMMUNITY VOICES</p>
+                <h3>Recent citizen reports</h3>
+              </div>
+              <button class="text-button" id="seeAllReportsBtn">See all reports →</button>
+            </div>
+            <div class="report-strip" id="reportStrip">
+              <!-- Dynamically populated -->
+            </div>
+          </section>
+        </div>
+
+        <!-- VIEW 2: LIVE REPORTS FEED -->
+        <div id="viewReportsFeed" class="view-panel" hidden>
+          <div class="feed-header-panel">
+            <div>
+              <p class="eyebrow">TRANSCRIBED EVIDENCE FEED</p>
+              <h2>All Community Voice Reports</h2>
+              <p>Chronological feed of citizen voice inputs transcribed via Speechmatics and processed by the Civic Evidence Parser.</p>
+            </div>
+            <div class="feed-filters">
+              <input type="search" id="feedSearchInput" class="search-input" placeholder="Search reports, landmarks, keywords..." />
+              <select id="feedTagFilter" class="small-select">
+                <option value="all">All tags</option>
+                <option value="ROAD SAFETY">Road Safety</option>
+                <option value="CLEANLINESS">Cleanliness</option>
+                <option value="PUBLIC LIGHTING">Public Lighting</option>
+                <option value="WATER & SEWAGE">Water & Sewage</option>
+                <option value="TRAFFIC & TRANSIT">Traffic & Transit</option>
+              </select>
+            </div>
+          </div>
+          <div class="full-reports-feed" id="fullReportsFeed">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- VIEW 3: ISSUE CLUSTERS -->
+        <div id="viewClustersView" class="view-panel" hidden>
+          <div class="feed-header-panel">
+            <div>
+              <p class="eyebrow">EXPLAINABLE CIVIC EVIDENCE</p>
+              <h2>Merged Issue Clusters</h2>
+              <p>CrowdFix groups similar nearby citizen reports into cohesive clusters with transparent explainability.</p>
+            </div>
+          </div>
+          <div class="clusters-grid" id="clustersGrid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- VIEW 4: RESOLVED ISSUES ARCHIVE -->
+        <div id="viewResolvedView" class="view-panel" hidden>
+          <div class="feed-header-panel">
+            <div>
+              <p class="eyebrow">CIVIC ACCOUNTABILITY LOG</p>
+              <h2>Resolved Community Issues</h2>
+              <p>Track closed issues, public-service team sign-offs, and community resolution times.</p>
+            </div>
+          </div>
+          <div class="resolved-grid" id="resolvedGrid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ONBOARDING & AUTH MODAL -->
+    <div class="modal-backdrop" id="authModal" hidden>
+      <div class="auth-modal">
+        <div class="auth-brand"><span class="brand-mark">✦</span> CrowdFix</div>
+        <p class="eyebrow accent">WELCOME TO YOUR CIVIC NETWORK</p>
+        <h2 id="authTitle">Create your CrowdFix account</h2>
+        <p class="modal-intro">Choose how you use CrowdFix so we can show you the right tools.</p>
+        
+        <div class="role-switch">
+          <button type="button" class="role-button active" data-role="resident">
+            Resident
+          </button>
+          <button type="button" class="role-button" data-role="officer">
+            Public-service team
+          </button>
+        </div>
+
+        <form id="authForm">
+          <div id="nameFieldContainer">
+            <label for="authName">Full name
+              <input id="authName" required placeholder="e.g. Rakshan Sharma" value="Rakshan" />
+            </label>
+          </div>
+          <label for="authEmail">Email address
+            <input id="authEmail" type="email" required placeholder="you@example.com" value="rakshan@civic.org" />
+          </label>
+          <label for="authPassword">Password
+            <input id="authPassword" type="password" required minlength="6" placeholder="At least 6 characters" value="password123" />
+          </label>
+          <label class="location-consent">
+            <input id="locationConsent" type="checkbox" checked />
+            <span>Use approximate neighborhood location to show nearby reports and improve routing. (Exact GPS is never shared publicly).</span>
+          </label>
+          <button class="primary-button auth-submit" type="submit">
+            Create account <span>→</span>
+          </button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <button id="toggleAuth" type="button">Sign in</button></p>
+        <p class="auth-note">🔒 Privacy first: Your exact GPS is obfuscated to neighborhood level. You can toggle permissions at any time.</p>
+      </div>
+    </div>
+
+    <!-- VOICE & TEXT REPORTING MODAL -->
+    <div class="modal-backdrop" id="reportModal" hidden>
+      <div class="report-modal">
+        <button class="close-button" id="closeReport" aria-label="Close modal">×</button>
+        <p class="eyebrow accent">NEW COMMUNITY REPORT</p>
+        <h2>What did you notice?</h2>
+        <p class="modal-intro">Speak naturally. CrowdFix will transcribe your speech and extract civic evidence.</p>
+
+        <!-- SPEECHMATICS REALTIME TELEMETRY INDICATOR (CRITICAL JUDGES FEATURE) -->
+        <div class="speechmatics-hud" id="speechmaticsHud">
+          <div class="hud-top">
+            <div class="hud-status">
+              <span class="hud-dot" id="hudDot"></span>
+              <strong id="hudStatusText">Speechmatics Realtime Ready</strong>
+            </div>
+            <div class="hud-badges">
+              <span class="hud-pill" id="telemetryLatencyPill">Latency: <b>~180ms</b></span>
+              <span class="hud-pill" id="telemetryLangPill">Lang: <b>English</b></span>
+              <span class="hud-pill" id="telemetryConfidencePill">Confidence: <b>98.4%</b></span>
+            </div>
+          </div>
+          <div class="hud-interim" id="hudInterim">
+            <span class="interim-label">Interim stream:</span>
+            <span class="interim-text" id="interimStreamText">Waiting for voice input...</span>
+          </div>
+        </div>
+
+        <!-- Architectural clarification -->
+        <div class="pipeline-explainer">
+          <span class="pipeline-icon">ℹ</span>
+          <span>Speechmatics handles speech understanding input (English & Hinglish); our civic engine structures and clusters the reports.</span>
+        </div>
+
+        <!-- Microphone Recording Box -->
+        <div class="voice-box" id="voiceBox">
+          <button class="record-button" id="recordButton" type="button" title="Start voice recording">
+            <span id="recordButtonIcon">●</span>
+          </button>
+          <div class="voice-box-text">
+            <strong id="recordTitle">Tap microphone to start speaking</strong>
+            <small id="recordHint">Supports English & Hinglish (e.g., “Large pothole near metro” or “Metro ke paas bada gaddha hai”)</small>
+          </div>
+          <div class="sound-wave-bars" id="soundWaveBars">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- Quick 1-Tap Demo Scenarios for Hackathon Judges -->
+        <div class="demo-chips-container">
+          <p class="demo-chips-label">⚡ 1-Tap Hackathon Test Prompts (English & Hinglish):</p>
+          <div class="demo-chips">
+            <button type="button" class="demo-chip" data-text="There is a dangerous pothole near the metro station on 80 Feet Road. Two bikes almost skidded this morning.">
+              <span>●</span> English: Pothole 80 Feet Rd (Merge Test)
+            </button>
+            <button type="button" class="demo-chip" data-text="80 Feet Road metro station ke paas bohot bada gaddha hai, do bikes abhi slip ho gayi dangerous pothole hai." style="border-color:#f97316;background:#fff7ed;">
+              <span>🇮🇳</span> Hinglish: Pothole Metro ke paas (Merge Test)
+            </button>
+            <button type="button" class="demo-chip" data-text="The garbage dump outside 6th Block commercial market has been overflowing for two days with severe foul smell.">
+              <span>♻</span> English: Overflowing Bins 6th Block (Merge Test)
+            </button>
+            <button type="button" class="demo-chip" data-text="6th block commercial market ke bahar kachra bohot zyada faila hua hai aur badboo aa rahi hai." style="border-color:#10b981;background:#f0fdf4;">
+              <span>🇮🇳</span> Hinglish: 6th Block Kachra Dump (Merge Test)
+            </button>
+            <button type="button" class="demo-chip" data-text="A water supply pipeline has burst and is flooding the road near 4th Cross Park. Clean water is being wasted.">
+              <span>▲</span> English: Water Pipeline Burst (New Cluster)
+            </button>
+            <button type="button" class="demo-chip" data-text="Streetlight has been flickering and completely off on 1st A Cross, making the road pitch dark and unsafe.">
+              <span>◉</span> English: Dark Streetlight 1st Cross (Merge Test)
+            </button>
+          </div>
+        </div>
+
+        <!-- Text input fallback / edit field -->
+        <label class="text-fallback">
+          Transcript / Description
+          <textarea id="reportText" placeholder="Your spoken words will appear here in real-time, or you can type directly..."></textarea>
+        </label>
+
+        <!-- Civic Evidence Parser Real-time Extraction Preview -->
+        <div class="parser-live-preview" id="parserLivePreview">
+          <div class="preview-header">
+            <span class="preview-title">Civic Evidence Parser Extraction:</span>
+            <span class="preview-sub">Rule-based NLP & heuristic entity tagger</span>
+          </div>
+          <div class="preview-tags">
+            <span class="tag-pill" id="previewCategory">Category: <b>Detecting…</b></span>
+            <span class="tag-pill" id="previewLandmark">Landmark: <b>Detecting…</b></span>
+            <span class="tag-pill" id="previewSeverity">Severity: <b>Normal</b></span>
+            <span class="tag-pill" id="previewSpam">Spam Risk: <b>Low (0.01)</b></span>
+          </div>
+          <div class="preview-clustering-reason" id="previewClusteringReason">
+            <span>Clustering Prediction: <em>Waiting for report text...</em></span>
+          </div>
+        </div>
+
+        <!-- Safety & Privacy Guarantee -->
+        <div class="safety-box">
+          <p class="safety-text">
+            🛡️ <strong>Safety & Trust:</strong> Single reports are marked <em>“Report may need verification”</em> until confirmed by 3 community voices or public-service officer sign-off. Exact citizen coordinates are never published.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <span id="transcriptState">Speechmatics Realtime Demo Ready</span>
+          <button class="primary-button small" id="submitReport" type="button">
+            Process & Submit Report <span>→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ISSUE CLUSTER DETAIL MODAL (EXPLAINABILITY & OFFICER WORKFLOW) -->
+    <div class="modal-backdrop" id="issueDetailModal" hidden>
+      <div class="detail-modal">
+        <button class="close-button" id="closeDetailModal" aria-label="Close modal">×</button>
+        
+        <div class="detail-header">
+          <span class="detail-icon" id="detailIcon">!</span>
+          <div>
+            <div class="detail-badge-row">
+              <span class="tag-badge" id="detailCategory">ROAD SAFETY</span>
+              <span class="priority-badge" id="detailPriority">High Priority</span>
+              <span class="status-badge" id="detailStatus">Open</span>
+            </div>
+            <h2 id="detailTitle">Large pothole near metro</h2>
+            <p class="detail-location" id="detailPlace">80 Feet Road, Koramangala · 3 reports merged</p>
+          </div>
+        </div>
+
+        <!-- Safety & Verification Flag -->
+        <div class="verification-alert" id="detailVerificationAlert">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <strong id="detailVerificationTitle">Report may need verification</strong>
+            <p id="detailVerificationDesc">Requires public-service officer confirmation or additional resident corroboration before high-urgency escalation.</p>
+          </div>
+        </div>
+
+        <!-- EXPLAINABLE CLUSTERING BREAKDOWN (CRITICAL JUDGES REQUIREMENT) -->
+        <div class="explainable-cluster-box">
+          <div class="cluster-box-title">
+            <span>▦ Explainable Clustering Engine</span>
+            <small>Why these reports were merged</small>
+          </div>
+          <div class="clustering-statement" id="detailClusteringStatement">
+            “Merged because category, landmark, and location matched.”
+          </div>
+          <div class="matching-criteria-pills" id="detailMatchingCriteria">
+            <span class="criteria-pill active">✓ Category: Road Safety</span>
+            <span class="criteria-pill active">✓ Landmark: 80 Feet Road</span>
+            <span class="criteria-pill active">✓ Proximity: ~140m</span>
+            <span class="criteria-pill active">✓ Semantic Intent: Hazard</span>
+          </div>
+        </div>
+
+        <!-- P2: Community Pressure Score + Resolution Estimate + SLA Countdown -->
+        <div id="detailP2Stats" style="margin:12px 0;"></div>
+
+        <!-- Linked Community Testimonies -->
+        <div class="detail-section">
+          <h3>Community Evidence & Voices (<span id="detailVoiceCount">3</span>)</h3>
+          <div class="merged-reports-list" id="detailMergedReportsList">
+            <!-- Dynamically populated with individual citizen reports -->
+          </div>
+        </div>
+
+        <!-- Resident Action: Add My Voice -->
+        <div class="resident-action-box" id="residentActionBox">
+          <div>
+            <strong>Are you experiencing this issue too?</strong>
+            <p>Add your voice to corroborate this report and elevate community priority.</p>
+          </div>
+          <button class="primary-button small" id="addMyVoiceBtn">
+            <span>+1</span> Add my voice
+          </button>
+        </div>
+
+        <!-- Public-Service Officer Actions -->
+        <div class="officer-control-panel" id="officerControlPanel">
+          <div class="officer-panel-header">
+            <strong>Public-Service Team Operations</strong>
+            <span class="badge-officer">Officer Mode</span>
+          </div>
+          <p class="officer-help-text">Review community evidence, escalate or update resolution state.</p>
+          <div class="officer-inputs">
+            <label>Update Civic Status:
+              <select id="officerStatusSelect" class="small-select">
+                <option value="Open">Open (In Queue)</option>
+                <option value="In Progress">In Progress (Team Dispatched)</option>
+                <option value="Resolved">Resolved (Work Completed)</option>
+              </select>
+            </label>
+            <label>Official Resolution Note:
+              <input type="text" id="officerNoteInput" placeholder="e.g. BBMP Ward 151 asphalt crew patched 120sqft area." />
+            </label>
+            <button class="primary-button small" id="officerUpdateBtn">
+              Save Civic Status Update
+            </button>
+          </div>
+        </div>
+
+        <!-- Share / Export footer -->
+        <div class="modal-footer" style="margin-top:16px;">
+          <button class="secondary-button small" id="whatsappShareBtn" style="background:#25d366;color:#fff;border-color:#25d366;">
+            <span>📲</span> WhatsApp
+          </button>
+          <button class="secondary-button small" id="shareEvidenceBtn">
+            <span>↑</span> Share
+          </button>
+          <button class="secondary-button small" id="exportEvidenceBtn">
+            ⬇ Export PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- USER PROFILE & ROLE SWITCHER MODAL -->
+    <div class="modal-backdrop" id="profileModal" hidden>
+      <div class="profile-modal">
+        <button class="close-button" id="closeProfileModal" aria-label="Close modal">×</button>
+        <p class="eyebrow accent">ACCOUNT & PREFERENCES</p>
+        <h2>Civic Identity</h2>
+        <div class="profile-card-large">
+          <div class="avatar-large" id="modalAvatarLarge">RS</div>
+          <div>
+            <h3 id="modalUserName">Rakshan</h3>
+            <p id="modalUserEmail">rakshan@civic.org</p>
+            <span class="role-pill-current" id="modalRoleBadge">Resident</span>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Switch Operating Persona</h4>
+          <p class="section-subtext">Toggle between Resident view (report & corroborate) and Public-Service Team view (triage & resolve).</p>
+          <div class="role-switch-large">
+            <button type="button" class="role-switch-option active" id="btnSwitchResident">
+              <strong>Resident</strong>
+              <small>File voice reports, add voices to clusters</small>
+            </button>
+            <button type="button" class="role-switch-option" id="btnSwitchOfficer">
+              <strong>Public-Service Team</strong>
+              <small>BBMP / Civic Works: triage, verify, resolve</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <h4>Privacy & Location Controls</h4>
+          <label class="toggle-setting">
+            <input type="checkbox" id="profileLocationToggle" checked />
+            <span>Enable approximate neighborhood routing (No exact GPS published)</span>
+          </label>
+        </div>
+
+        <div class="profile-actions-row">
+          <button class="secondary-button small" id="btnResetDemoData">
+            Reset Demo Data
+          </button>
+          <button class="secondary-button small text-danger" id="btnSignOut">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE & JUDGES GUIDE MODAL -->
+    <div class="modal-backdrop" id="helpModal" hidden>
+      <div class="help-modal">
+        <button class="close-button" id="closeHelpModal" aria-label="Close modal">×</button>
+        <p class="eyebrow accent">HACKATHON ARCHITECTURE</p>
+        <h2>How CrowdFix Works</h2>
+        <p class="modal-intro">A transparent overview of the speech, civic parsing, and clustering pipeline for hackathon judges.</p>
+
+        <div class="arch-card">
+          <div class="arch-step">
+            <span class="arch-number">1</span>
+            <div>
+              <strong>Speechmatics Realtime Voice Understanding (English & Hinglish)</strong>
+              <p>Captures spoken citizen reports in Indian English and colloquial code-mixed Hinglish with streaming low latency (~180ms), language identification telemetry, and interim partial transcripts.</p>
+            </div>
+          </div>
+          <div class="arch-step">
+            <span class="arch-number">2</span>
+            <div>
+              <strong>Civic Evidence Parser</strong>
+              <p>Speechmatics handles speech understanding input; our client-side civic engine structures the text into Category, Severity, and Landmark entities using deterministic heuristics.</p>
+            </div>
+          </div>
+          <div class="arch-step">
+            <span class="arch-number">3</span>
+            <div>
+              <strong>Explainable Duplicate Clustering</strong>
+              <p>Merges overlapping citizen reports based on semantic category, landmark match, and geographic proximity radius. Transparently explains why items are grouped.</p>
+            </div>
+          </div>
+          <div class="arch-step">
+            <span class="arch-number">4</span>
+            <div>
+              <strong>Safety, Verification & Privacy Controls</strong>
+              <p>Protects citizen privacy by obfuscating exact coordinates to neighborhood blocks. Unverified single reports require officer review or 3 resident voices before high-level escalation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="primary-button small" id="closeHelpFooter">Got it <span>✓</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
