@@ -561,10 +561,17 @@ nav#sidebarNav {
   box-shadow: 0 12px 32px var(--orange-glow);
 }
 .primary-button:hover::before { left: 100%; }
-.primary-button:active { transform: translateY(0); }
 .primary-button.small {
   padding: 8px 14px;
   font-size: 12px;
+}
+.primary-button:disabled,
+.primary-button.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
 }
 
 .secondary-button {

@@ -131,11 +131,12 @@ const parserMatch = js.match(/class CivicEvidenceParser \{[\s\S]*?\n\}/);
 function simulateParse(text) {
   const lower = text.toLowerCase();
   let category = 'ROAD SAFETY';
-  if (/(garbage|waste|trash|bin|dump|stink|smell|litter|debris|plastic|kachra|kuda|badboo|safai|gandagi|dhalav|dhalao|kachre|ganda)/i.test(lower)) category = 'CLEANLINESS';
+  if (/(pothole|path hole|pathhole|pot hole|gaddha|khaddha|crater|asphalt)/i.test(lower)) category = 'ROAD SAFETY';
+  else if (/(garbage|waste|trash|bin|dump|stink|smell|litter|debris|plastic|kachra|kuda|badboo|safai|gandagi|dhalav|dhalao|kachre|ganda)/i.test(lower)) category = 'CLEANLINESS';
   else if (/(streetlight|street light|light|lamp|dark|night|bulb|pole|flicker|sparking|andhera|roshni|bijli|khamba|batti)/i.test(lower)) category = 'PUBLIC LIGHTING';
   else if (/(water|pipe|pipeline|leak|burst|sewage|drain|drainage|gutter|drinking|flooding|paani|pani|nali|naali|gutar|gutters|ganda paani|bah raha|phat)/i.test(lower)) category = 'WATER & SEWAGE';
-  else if (/(traffic|signal|jam|congestion|junction|bus stop|auto stand|jaam|bheed|gaadiyan|chakka jam|red light)/i.test(lower)) category = 'TRAFFIC & TRANSIT';
-  else if (/(pothole|path hole|pathhole|pot hole|gaddha|khaddha|road|sadak|bike|skid|accident|crash|crater|asphalt|slip|gir)/i.test(lower)) category = 'ROAD SAFETY';
+  else if (/(traffic|signal|jam|congestion|bus stop|auto stand|jaam|bheed|gaadiyan|chakka jam|red light)/i.test(lower)) category = 'TRAFFIC & TRANSIT';
+  else if (/(road|sadak|bike|skid|accident|crash|slip|gir)/i.test(lower)) category = 'ROAD SAFETY';
 
   let landmark = 'Koramangala';
   if (/(80 feet road|80 ft road|80feet|assi feet|80 foot)/i.test(lower)) landmark = '80 Feet Road';
@@ -829,6 +830,21 @@ test('All default civic issues and testimonies aligned with Dehradun, Uttarakhan
   assert(js.includes("place: 'Ballupur Chowk, Dehradun'"), 'Missing Ballupur Chowk, Dehradun in seed issues');
   assert(js.includes("place: 'Saharanpur Road, Dehradun'"), 'Missing Saharanpur Road, Dehradun in seed issues');
   assert(!html.includes('✓ Landmark: 80 Feet Road'), 'Found legacy 80 Feet Road landmark in index.html');
+});
+
+test('Pothole prompt near junction correctly classifies as ROAD SAFETY (pothole priority)', () => {
+  const result = simulateParse('There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.');
+  assert(result.category === 'ROAD SAFETY', `Expected ROAD SAFETY but got ${result.category}`);
+});
+
+test('Submit button is labeled Waiting for final transcript… and disabled during streaming in JS', () => {
+  assert(js.includes('Waiting for final transcript…'), 'Missing Waiting for final transcript… label in app.js');
+  assert(js.includes('submitBtn.disabled = true;'), 'Missing submitBtn.disabled = true in app.js');
+});
+
+test('Location fallback strictly anchors to Dehradun, Uttarakhand without external routing leaks', () => {
+  assert(js.includes("const DEHRADUN_ZONE_NAME = 'Rajpur Road, Dehradun';"), 'Missing DEHRADUN_ZONE_NAME in app.js');
+  assert(!js.includes('Muzaffarnagar'), 'Muzaffarnagar found in app.js');
 });
 
 

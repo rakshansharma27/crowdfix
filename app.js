@@ -344,11 +344,16 @@ class CivicEvidenceParser {
     const spamScore = isTooShort || isRepetitive ? 0.94 : 0.01;
 
     // 2. Category Classification (Supports English & Hinglish)
+    // Priority: Specific physical road hazards (potholes/craters) take precedence over general traffic/locations
     let category = 'ROAD SAFETY';
     let icon = '!';
     let color = 'orange';
 
-    if (/(garbage|waste|trash|bin|dump|stink|smell|litter|debris|plastic|kachra|kuda|badboo|safai|gandagi|dhalav|dhalao|kachre|ganda)/i.test(lower)) {
+    if (/(pothole|path hole|pathhole|pot hole|gaddha|khaddha|crater|asphalt)/i.test(lower)) {
+      category = 'ROAD SAFETY';
+      icon = '!';
+      color = 'orange';
+    } else if (/(garbage|waste|trash|bin|dump|stink|smell|litter|debris|plastic|kachra|kuda|badboo|safai|gandagi|dhalav|dhalao|kachre|ganda)/i.test(lower)) {
       category = 'CLEANLINESS';
       icon = '♻';
       color = 'green';
@@ -360,10 +365,10 @@ class CivicEvidenceParser {
       category = 'WATER & SEWAGE';
       icon = '▲';
       color = 'orange';
-    } else if (/(traffic|signal|jam|congestion|junction|bus stop|auto stand|jaam|bheed|gaadiyan|chakka jam|red light)/i.test(lower)) {
+    } else if (/(traffic|signal|jam|congestion|bus stop|auto stand|jaam|bheed|gaadiyan|chakka jam|red light)/i.test(lower)) {
       category = 'TRAFFIC & TRANSIT';
       icon = '▰';
-    } else if (/(pothole|path hole|pathhole|pot hole|gaddha|khaddha|road|sadak|bike|skid|accident|crash|crater|asphalt|slip|gir)/i.test(lower)) {
+    } else if (/(road|sadak|bike|skid|accident|crash|slip|gir)/i.test(lower)) {
       category = 'ROAD SAFETY';
       icon = '!';
       color = 'orange';
@@ -694,6 +699,18 @@ function startSpeechmaticsSimulation(sampleText, onComplete) {
 
   setSpeechmaticsHudState('● Speechmatics Realtime Stream Active', '~174ms', '97.2%', true);
 
+  // Disable submit button while voice transcript is streaming
+  const submitBtn = document.querySelector('#submitReport');
+  const transcriptState = document.querySelector('#transcriptState');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.classList.add('disabled');
+    submitBtn.innerHTML = 'Waiting for final transcript…';
+  }
+  if (transcriptState) {
+    transcriptState.textContent = 'Speechmatics streaming in real time…';
+  }
+
   const words = sampleText.split(' ');
   let index = 0;
   const textArea = document.querySelector('#reportText');
@@ -729,9 +746,23 @@ function startSpeechmaticsSimulation(sampleText, onComplete) {
       index++;
     } else {
       clearInterval(streamingTimer);
+      streamingTimer = null;
       setSpeechmaticsHudState('✓ Speechmatics Transcription Finalized', '~182ms', '98.8%', false);
       updateInterimStream(`Final transcript confirmed: "${sampleText}"`);
       stopVoiceRecordingUI();
+
+      // Re-enable submit button now that transcript is complete
+      const finalSubmitBtn = document.querySelector('#submitReport');
+      const finalTranscriptState = document.querySelector('#transcriptState');
+      if (finalSubmitBtn) {
+        finalSubmitBtn.disabled = false;
+        finalSubmitBtn.classList.remove('disabled');
+        finalSubmitBtn.innerHTML = 'Process &amp; Submit Report <span>→</span>';
+      }
+      if (finalTranscriptState) {
+        finalTranscriptState.textContent = '✓ Transcript complete · Ready to submit';
+      }
+
       if (onComplete) onComplete();
     }
   }, 120);
@@ -826,11 +857,21 @@ function startVoiceRecordingUI() {
   const title = document.querySelector('#recordTitle');
   const hint = document.querySelector('#recordHint');
   const wave = document.querySelector('#soundWaveBars');
+  const submitBtn = document.querySelector('#submitReport');
+  const transcriptState = document.querySelector('#transcriptState');
 
   if (btn) btn.classList.add('recording');
   if (title) title.textContent = 'Listening with Speechmatics…';
   if (hint) hint.textContent = 'Describe the civic problem and street location.';
   if (wave) wave.classList.add('active');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.classList.add('disabled');
+    submitBtn.innerHTML = 'Waiting for final transcript…';
+  }
+  if (transcriptState) {
+    transcriptState.textContent = 'Listening and transcribing live…';
+  }
 }
 
 function stopVoiceRecordingUI() {
@@ -838,11 +879,21 @@ function stopVoiceRecordingUI() {
   const title = document.querySelector('#recordTitle');
   const hint = document.querySelector('#recordHint');
   const wave = document.querySelector('#soundWaveBars');
+  const submitBtn = document.querySelector('#submitReport');
+  const transcriptState = document.querySelector('#transcriptState');
 
   if (btn) btn.classList.remove('recording');
   if (title) title.textContent = 'Tap microphone to start speaking';
   if (hint) hint.textContent = 'Describe the issue and landmark (e.g. “Large pothole near Clock Tower on Rajpur Road”)';
   if (wave) wave.classList.remove('active');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('disabled');
+    submitBtn.innerHTML = 'Process &amp; Submit Report <span>→</span>';
+  }
+  if (transcriptState) {
+    transcriptState.textContent = 'Speechmatics Realtime Ready';
+  }
 }
 
 function stopVoiceRecording() {
@@ -996,6 +1047,13 @@ function handleReportSubmission() {
   if (!state.account) {
     showToast('Please sign in or create an account to file a complaint.');
     openAuthModal('Please sign in or create an account to file a complaint.');
+    return;
+  }
+
+  // Prevent submitting while voice transcript is still streaming in progress
+  const submitBtn = document.querySelector('#submitReport');
+  if (isRecording || (submitBtn && submitBtn.disabled)) {
+    showToast('⏳ Please wait for the voice transcript to complete before submitting.');
     return;
   }
 
@@ -1744,10 +1802,21 @@ function openReportModal() {
   }
   const modal = document.querySelector('#reportModal');
   const textArea = document.querySelector('#reportText');
+  const submitBtn = document.querySelector('#submitReport');
+  const transcriptState = document.querySelector('#transcriptState');
+
   if (modal) modal.hidden = false;
   if (textArea) {
     textArea.value = '';
     textArea.focus();
+  }
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('disabled');
+    submitBtn.innerHTML = 'Process &amp; Submit Report <span>→</span>';
+  }
+  if (transcriptState) {
+    transcriptState.textContent = 'Speechmatics Realtime Demo Ready';
   }
   setSpeechmaticsHudState('Speechmatics Realtime Ready', '~180ms', '98.4%', false);
   const langPill = document.querySelector('#telemetryLangPill');
@@ -1764,24 +1833,35 @@ function closeReportModal() {
 
 // -------------------------------------------------------------
 // LOCATION SERVICES & PRIVACY OBFUSCATION (User Recommendation #4)
+// Dedicated Demonstration Zone: Dehradun, Uttarakhand, India
 // -------------------------------------------------------------
+const DEHRADUN_ZONE_COORDS = [30.3256, 78.0437];
+const DEHRADUN_ZONE_NAME = 'Rajpur Road, Dehradun';
+
 async function fetchIpGeolocationFallback() {
-  try {
-    const res = await fetch('https://ipapi.co/json/');
-    if (!res.ok) throw new Error('IP API status ' + res.status);
-    const data = await res.json();
-    if (data.latitude && data.longitude) {
-      return {
-        lat: data.latitude,
-        lon: data.longitude,
-        city: data.city || 'Dehradun',
-        region: data.region || 'Uttarakhand'
-      };
-    }
-  } catch (e) {
-    console.warn('IP geolocation fallback notice:', e);
+  // Always anchor to Dehradun demonstration zone to maintain strict civic alignment
+  return {
+    lat: DEHRADUN_ZONE_COORDS[0],
+    lon: DEHRADUN_ZONE_COORDS[1],
+    city: 'Dehradun',
+    region: 'Uttarakhand'
+  };
+}
+
+function applyLocationFallback(reason) {
+  const pillText = document.querySelector('#locationPillText');
+  const pill = document.querySelector('#locationPill');
+  state.currentCoords = [...DEHRADUN_ZONE_COORDS];
+  state.currentPlaceName = DEHRADUN_ZONE_NAME;
+  if (pillText) pillText.textContent = DEHRADUN_ZONE_NAME;
+  if (pill) {
+    pill.classList.add('ready');
+    pill.title = 'Demonstration Zone: Dehradun, Uttarakhand (Nagar Nigam Dehradun)';
   }
-  return null;
+  if (osmMapInstance) {
+    osmMapInstance.setView(state.currentCoords, 15);
+    renderMapMarkers();
+  }
 }
 
 function requestLocation(isManualClick = false) {
@@ -1800,21 +1880,31 @@ function requestLocation(isManualClick = false) {
     async (pos) => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-      state.currentCoords = [lat, lon];
       
-      // Real-time reverse geocoding via OpenStreetMap Nominatim
-      try {
-        const resolvedAddress = await reverseGeocodeNominatim(lat, lon);
-        if (pillText) pillText.textContent = resolvedAddress;
-        state.currentPlaceName = resolvedAddress;
-        if (isManualClick) showToast(`📍 Location detected: ${resolvedAddress}`);
-      } catch (e) {
-        if (pillText) pillText.textContent = `${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E (GPS)`;
+      // If user's GPS is in Dehradun / Uttarakhand region (~29.8 to ~31.2 N, ~77.5 to ~79.0 E), use real GPS
+      const isDehradunRegion = (lat >= 29.8 && lat <= 31.2 && lon >= 77.5 && lon <= 79.0);
+      
+      if (isDehradunRegion) {
+        state.currentCoords = [lat, lon];
+        try {
+          const resolvedAddress = await reverseGeocodeNominatim(lat, lon);
+          if (pillText) pillText.textContent = resolvedAddress;
+          state.currentPlaceName = resolvedAddress;
+          if (isManualClick) showToast(`📍 Location detected: ${resolvedAddress}`);
+        } catch (e) {
+          if (pillText) pillText.textContent = `Dehradun (${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E)`;
+        }
+      } else {
+        // Outside Dehradun demo zone: anchor cleanly to Dehradun demo coordinates
+        state.currentCoords = [...DEHRADUN_ZONE_COORDS];
+        state.currentPlaceName = DEHRADUN_ZONE_NAME;
+        if (pillText) pillText.textContent = DEHRADUN_ZONE_NAME;
+        if (isManualClick) showToast(`📍 Anchored to demonstration zone: ${DEHRADUN_ZONE_NAME}`);
       }
 
       if (pill) {
         pill.classList.add('ready');
-        pill.title = 'Click to re-detect your current GPS location';
+        pill.title = 'Demonstration Zone: Dehradun, Uttarakhand';
       }
 
       if (osmMapInstance) {
@@ -1822,31 +1912,15 @@ function requestLocation(isManualClick = false) {
         renderMapMarkers();
       }
     },
-    async (err) => {
+    (err) => {
       console.warn('GPS location permission or hardware note:', err.message);
-      
-      // Automatic IP-based fallback if GPS is blocked or timed out
-      const ipLoc = await fetchIpGeolocationFallback();
-      if (ipLoc) {
-        state.currentCoords = [ipLoc.lat, ipLoc.lon];
-        const placeName = `${ipLoc.city}, ${ipLoc.region} (IP Location)`;
-        if (pillText) pillText.textContent = placeName;
-        state.currentPlaceName = placeName;
-        if (pill) pill.classList.add('ready');
-        if (osmMapInstance) {
-          osmMapInstance.setView(state.currentCoords, 14);
-          renderMapMarkers();
-        }
-        if (isManualClick) showToast(`📍 Located via network: ${placeName}`);
-      } else {
-        if (pillText) pillText.textContent = 'Rajpur Road, Dehradun (Default)';
-        if (pill) pill.classList.add('ready');
-        if (isManualClick) showToast('Could not access GPS. Please allow location permissions in browser.');
-      }
+      // Clean fallback: Always keep Dehradun, never show external ISP routing city
+      applyLocationFallback('GPS permission unavailable');
+      if (isManualClick) showToast('📍 Demo zone active: Rajpur Road, Dehradun.');
     },
     {
       enableHighAccuracy: true,
-      timeout: 10000,
+      timeout: 8000,
       maximumAge: 30000
     }
   );
@@ -1955,6 +2029,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Textarea input triggers live civic parser preview
   document.querySelector('#reportText')?.addEventListener('input', (e) => {
     updateParserLivePreview(e.target.value);
+    const submitBtn = document.querySelector('#submitReport');
+    if (submitBtn && submitBtn.disabled && !isRecording && !streamingTimer) {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('disabled');
+      submitBtn.innerHTML = 'Process &amp; Submit Report <span>→</span>';
+    }
   });
 
   // Report Submission
