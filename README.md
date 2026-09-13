@@ -1,196 +1,240 @@
-# CrowdFix — Voice-First Civic Issue Intelligence
+# CrowdFix — Turn Voices into Action
 
-> **Turn fragmented citizen voices into collective civic evidence — and collective evidence into municipal action.**
+CrowdFix is a voice-first civic operations platform that transforms community complaints into structured, explainable, and actionable civic evidence.
 
-🌐 **Live GitHub Pages Demo:** [https://rakshansharma27.github.io/crowdfix/](https://rakshansharma27.github.io/crowdfix/)  
-📍 **Demonstration Deployment Zone:** Dehradun, Uttarakhand, India (Nagar Nigam Dehradun / MDDA)
-
----
-
-## 🎯 The Problem
-
-When citizens face broken streetlights, hazardous potholes, bursting sewer mains, or overflowing trash dumps, reporting is tedious and disjointed:
-- **Low citizen engagement:** Typing formal complaints into complex municipal portals on mobile keyboards is friction-heavy.
-- **Fragmented complaints:** 25 different residents report the same crater on a busy road as 25 distinct tickets, overwhelming municipal dispatch queues.
-- **No civic feedback loop:** Citizens feel reports enter a "black hole" with zero transparency into corroboration or work progress.
+Residents report problems naturally by voice. CrowdFix transcribes the report, extracts civic information, detects duplicate complaints, groups them into issue clusters, and helps public-service teams track resolution.
 
 ---
 
-## 💡 The Solution: How CrowdFix Works
+## Problem
 
-CrowdFix is a **voice-first civic intelligence engine** that transforms spoken community complaints into actionable, grouped civic evidence with transparent explainability:
+Civic complaints are often fragmented across phone calls, messages, social media, and municipal portals. Many residents report the same problem separately, making it difficult for public-service teams to identify the most urgent issues.
+
+CrowdFix combines these fragmented voices into one clear community evidence graph.
+
+---
+
+## How it works
 
 ```
-[ Citizen Speaks (English / Hinglish) ]
-                 │
-                 ▼
-[ Speechmatics Realtime ASR Layer ] ── (~180ms telemetry, streaming confidence)
-                 │
-                 ▼
-[ Civic Evidence Parser (NLP/Heuristics) ] ── (Category, Landmark, Severity, Spam Filter)
-                 │
-                 ▼
-[ Explainable Duplicate Clustering Engine ] ── (Matches category + proximity + landmark)
-        ┌────────┴────────┐
-        ▼                 ▼
-[ Corroborates Cluster ] [ Creates New Cluster ] ── (Leaflet.js & Density Heatmap)
-        │
-        ▼
-[ Real-Time Automated Civic Simulation ] ── (Dynamic citizen voices & Nagar Nigam resolutions)
+Resident voice report
+       ↓
+Speechmatics realtime transcription
+       ↓
+Civic Evidence Parser
+       ↓
+Duplicate detection and issue clustering
+       ↓
+Interactive privacy-preserving map
+       ↓
+Public-service officer action
+       ↓
+Resolution tracking
 ```
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-### 1. Speechmatics Realtime Voice Understanding (English & Hinglish)
-- Built for real Indian speech: understands standard English and code-mixed colloquial **Hinglish** (e.g., *"Rajpur Road Clock Tower ke paas bohot bada gaddha hai"*).
-- **Streaming Telemetry HUD:** Displays live confidence scores (98%+), ~180ms latency jitter, live language badge, and interim partial speech transcripts.
-- **1-Tap Demo Test Prompts:** Fast test chips in both English & Hinglish for instant live presentation demos.
-
-### 2. Explainable Duplicate Clustering Engine
-- Automatically aggregates multiple citizen voices reporting the same underlying civic problem into a single high-priority cluster.
-- Transparently displays **explainable criteria** to judges and public officers:
-  - *"Merged because Category (Road Safety), Landmark (Rajpur Road), and Proximity (~140m) matched."*
-- Prevents civic ticket bloat while boosting urgent community pressure scores.
-
-### 3. OpenStreetMap + Nominatim Reverse Geocoding & Leaflet Heatmap
-- Automatic reverse geocoding via OpenStreetMap Nominatim with privacy-preserving neighborhood obfuscation (exact citizen GPS is never exposed).
-- **FOSS Density Heatmap (`leaflet-heat`):** 1-Click toggle between discrete civic pins and continuous complaint density heatmaps.
-
-### 4. Continuous Randomized Civic Activity & Resolution Engine
-- **Automated Citizen Voices:** Continuously simulates realistic citizen complaints across major Dehradun corridors (*Prem Nagar, Clock Tower, Paltan Bazaar, Ballupur Chowk, ISBT Dehradun, Saharanpur Road, EC Road*) at randomized intervals (8–15 seconds).
-- **Automated Municipal Resolutions:** Simulates municipal teams (*Er. Suresh Kumar - Roads*, *Priya Nambiar - SWM*, *UPCL Electrical*, *Uttarakhand Jal Sansthan*) inspecting, updating status, resolving issues, and archiving tickets into the **Civic Accountability Log**.
-
-### 5. Multi-Persona Experience (Resident vs. Officer)
-- **Resident Mode:** File spoken reports, corroborate ongoing clusters (`+1 Add My Voice`), share evidence to WhatsApp, or export PDF dossiers.
-- **Public-Service Team Mode (Nagar Nigam Dehradun):** Review citizen audio transcripts, inspect clustering criteria, update status (`Open` → `In Progress` → `Resolved`), and log verified repair notes.
-- **Authentic Account Switcher:** 1-Click switching between verified civic identities (*Rakshan Sharma*, *Arav Sharma*, *Snehal Raj*).
-
-### 6. Guest Browsing & Auth Access Control
-- **Anyone can browse** the live map, issue clusters, reports feed, and resolved archive without creating an account.
-- **Protected actions require login:** Filing a report, corroborating an issue (`+1`), and officer status updates are all auth-gated.
-- Auth modal opens automatically when a guest attempts a protected action, with a contextual subtitle explaining why login is needed.
-- Auth form inputs are blank by default — no autofill or hardcoded identity.
-
-### 7. Modern UI / UX Design System (v2.0)
-- **Glassmorphic sticky topbar:** `backdrop-filter: blur(20px)` frosted glass header pinned to the top while scrolling.
-- **Scroll reveal animations:** `IntersectionObserver`-powered entrance animations — cards, stat blocks, and feed items fade and slide in as they enter the viewport, with stagger delays for sequential reveal.
-- **Micro-interactions everywhere:** Button shimmer sweep on hover, icon spin on stat cards, sidebar nav slide-in, issue row slide-right, cluster card lift with gradient overlay reveal, close button rotate-on-hover.
-- **Floating hero orbit:** Animated floating nodes with staggered `float` keyframes.
-- **Gradient design language:** Linear gradient buttons, gradient top-border reveal on card hover, gradient pressure bar fill (`purple → orange`), gradient hero background with ambient radial glow layers.
-- **Glassmorphic modals:** `backdrop-filter: blur(10px)` overlay, `modalIn` scale+translateY entrance animation, rounded `28px` corners.
-- **Custom scrollbar:** 5px thin scrollbar with rounded thumb matching the design system.
-- **Full responsiveness:** Breakpoints at 1100px, 960px (mobile nav), 640px (single-column), 400px (micro screens).
-
-### 8. Production & Open-Source Integrations
-- **Web Push Notifications (`sw.js`):** Service Worker-based browser alerts when nearby issues are corroborated or resolved.
-- **Authentication:** Clerk Google OAuth button integration.
-- **Realtime Sync:** PocketBase integration status indicator.
-- **Visual Evidence:** Photo/camera capture placeholder with EXIF GPS sanitization container (*Coming Soon in v2*).
+- **Real-time voice report intake**
+- **Speechmatics transcription telemetry**
+- **Interim transcript and confidence display**
+- **English and Hinglish demo prompts**
+- **Civic category extraction**
+- **Landmark and severity detection**
+- **Explainable duplicate clustering**
+- **Community pressure scoring**
+- **Interactive Leaflet and OpenStreetMap map**
+- **Approximate location handling for privacy**
+- **Resident and public-service team workflows**
+- **Add My Voice corroboration**
+- **Issue status lifecycle:**
+  - `Open`
+  - `In Progress`
+  - `Resolved`
+- **Live Reports feed with search and filters**
+- **Issue Cluster dashboard**
+- **Resolved issue archive**
+- **WhatsApp sharing**
+- **Evidence export demo**
+- **LocalStorage persistence**
+- **Reset Demo Data functionality**
+- **Mobile-responsive interface**
 
 ---
 
-## 👥 Demo Accounts
+## Speechmatics Integration
 
-| Name | Role | Email | Area |
-|------|------|-------|------|
-| Rakshan Sharma | Resident | rakshan.sharma@gmail.com | Rajpur Road, Dehradun |
-| Arav Sharma | Resident | arav.sharma@outlook.com | Ballupur Chowk, Dehradun |
-| Snehal Raj | Officer (Nagar Nigam) | snehal.raj@nagarnigamdehradun.gov.in | Civic Works & SWM |
+Speechmatics powers the realtime speech experience, including:
+- Interim transcription
+- Final transcript confirmation
+- Confidence scores
+- Language display
+- Latency telemetry
+- English and Hinglish voice input
 
-> Log in with any of the above accounts via the **Sign In** button. Guests can browse the full map and reports feed without logging in.
+After transcription, CrowdFix processes the text through its Civic Evidence Parser and clustering engine.
 
----
-
-## 🏛️ Grounded Demonstration Zone: Dehradun, Uttarakhand
-
-The prototype is fully configured for Dehradun civic operations:
-- **Default Map Center:** Dehradun Ghanta Ghar / Clock Tower (`[30.3256, 78.0437]`).
-- **Civic Bodies:** Nagar Nigam Dehradun (DMC), Mussoorie Dehradun Development Authority (MDDA), Uttarakhand Jal Sansthan, and UPCL.
-- **Landmarks Recognized:** Rajpur Road, Clock Tower, Paltan Bazaar, Ballupur Chowk, Saharanpur Road, Prem Nagar (College Corridor), ISBT Dehradun.
+The prototype also includes demo prompts and browser recognition fallbacks so judges can test the complete workflow even when microphone access or external API access is unavailable.
 
 ---
 
-## 💻 Local Quickstart
+## Civic Evidence Parser
 
-Run with any zero-configuration static server (pure HTML5 / ES6 / CSS3):
+The parser extracts:
+- Civic category
+- Landmark or street
+- Severity
+- Hazard level
+- Spam risk
+- Possible duplicate cluster
 
+**Example:**
+```json
+{
+  "category": "ROAD SAFETY",
+  "landmark": "Rajpur Road",
+  "severity": "High",
+  "hazard": "Vehicle accident risk",
+  "spamRisk": "Low"
+}
+```
+
+The parser is intentionally presented as a transparent rule-based civic evidence engine rather than an unexplained black-box AI system.
+
+---
+
+## Explainable Clustering
+
+CrowdFix explains why reports are merged:
+- ✓ Category matched: Road Safety
+- ✓ Landmark matched: Rajpur Road
+- ✓ Location proximity matched
+- ✓ Existing community cluster found
+
+This allows both residents and officers to understand how community evidence is organized.
+
+---
+
+## Demo Walkthrough
+
+1. Open the [CrowdFix Live Demo](https://rakshansharma27.github.io/crowdfix/).
+2. Click **Quick Voice Demo**.
+3. Select a demo prompt such as:
+   - *Pothole near Rajpur Road*
+   - *Overflowing bins at Paltan Bazaar*
+   - *Water pipeline burst*
+4. Watch the Speechmatics transcription HUD.
+5. Review the Civic Evidence Parser output.
+6. Submit the report.
+7. Open the issue cluster and inspect the evidence.
+8. Add another community voice using **Add My Voice**.
+9. Switch to **Public-Service Team** mode.
+10. Change the issue to **In Progress** or **Resolved**.
+11. View the updated issue in the **Resolved** archive.
+
+---
+
+## Privacy and Safety
+
+- Exact resident GPS coordinates are not publicly displayed.
+- Locations are obfuscated to an approximate neighborhood level.
+- Single reports are marked as requiring verification.
+- High-priority escalation requires additional corroboration or officer confirmation.
+- The prototype does not expose private account credentials.
+- Demo authentication is local-only and intended for hackathon testing.
+
+---
+
+## Technology
+
+- **HTML5**
+- **CSS3**
+- **Vanilla JavaScript**
+- **Speechmatics speech-to-text**
+- **Leaflet.js**
+- **OpenStreetMap tiles**
+- **Browser Geolocation API**
+- **Browser Web Speech API fallback**
+- **LocalStorage persistence**
+- **GitHub Pages deployment**
+
+---
+
+## Run Locally
+
+Clone the repository:
 ```bash
-# Clone the repository
 git clone https://github.com/rakshansharma27/crowdfix.git
 cd crowdfix
-
-# Run local web server
-npx serve . --listen 3434
 ```
 
-Open `http://localhost:3434` in Google Chrome or Microsoft Edge for microphone access via Web Speech API.
-
----
-
-## 🧪 Automated Testing & Verification
-
-CrowdFix includes an automated Node.js test suite verifying all UI components, NLP parsers, clustering algorithms, state logic, event wiring, auth guards, and guest browsing controls:
-
+Start a local server:
 ```bash
-node test_crowdfix.js
+python -m http.server 4173
 ```
 
-**Test Results:**  
+Open:
 ```
-────────────────────────────────────────────────────────────
-RESULTS: 253 passed, 0 failed
-🎉 All tests passed! CrowdFix is demo-ready.
-────────────────────────────────────────────────────────────
+http://localhost:4173
 ```
 
-### Test Coverage Areas
-| Suite | Tests |
-|-------|-------|
-| HTML Structure & Accessibility | IDs, ARIA, semantic elements |
-| CSS Critical Classes | All component classes present |
-| Speechmatics HUD & Language | Streaming, confidence, Hinglish, Hero HUD |
-| Civic Evidence Parser | 12 English & Hinglish scenarios |
-| Explainable Clustering Logic | 6 merge/create scenarios |
-| Stats & State Logic | Formulas, edge cases |
-| P2: Pressure Score | 6 voice-count scenarios |
-| P2: Resolution Estimate | 4 scenarios + render check |
-| P2: SLA Countdown | Recent/breached/cleared |
-| P2: WhatsApp Share | URL, tab, content |
-| Keyboard Shortcuts | R key, Escape, input guards |
-| Mobile Navigation | Hamburger, overlay, slide-in |
-| Share & Export | `navigator.share`, PDF toast |
-| Empty States | All 4 views |
-| Dynamic Timestamps | `timeAgo`, auto-refresh |
-| Seed Data Integrity | 3 issues, Dehradun testimonies & landmarks |
-| Realism (Maps, Auth, Photos) | Nominatim, Clerk, PocketBase, heatmap |
-| Guest Browsing & Auth Guards | 11 access-control & demo guest scenarios |
+> **Note:** Microphone and geolocation features work best on `localhost` or HTTPS.
 
 ---
 
-## 📂 Project Architecture
+## Project Structure
 
 ```
-crowdfix-prototype/
-├── index.html          # Semantic HTML5 SPA shell — guest/auth state, hero HUD, modals, scroll-reveal classes
-├── styles.css          # Modern Design System v2.0 — glassmorphism, scroll animations, micro-interactions
-├── app.js              # Speechmatics telemetry, Civic Parser, Clustering, Auth, Automation, Scroll Reveal
-├── sw.js               # Service worker for offline caching & Web Push notifications
-├── test_crowdfix.js    # Comprehensive test runner (250 tests covering all logic & UI)
-└── README.md           # Documentation, architecture & presentation guide
+crowdfix/
+├── index.html
+├── styles.css
+├── app.js
+└── README.md
 ```
 
 ---
 
-## 🏆 Hackathon Pitch Highlights
+## Current Prototype Limitations
 
-1. **Speechmatics-First:** Voice isn't just an input method — it is the bridge that empowers non-technical citizens and two-wheeler commuters to report problems in seconds.
-2. **Explainability Over Black Boxes:** Both citizens and municipal officers see *why* issues are merged and *how* priority scores are computed.
-3. **Closing the Loop:** Transparent public accountability transforms passive complaining into collective civic action.
-4. **Open by Default:** Anyone can browse the live civic map and evidence feed without an account — lowering the barrier to public engagement.
-5. **Modern & Accessible:** A production-grade UI/UX with glassmorphism, scroll animations, full responsiveness, and keyboard navigation support.
+This hackathon prototype uses local browser state for demonstration purposes.
+
+Production deployment would require:
+- Secure backend authentication
+- Hashed password storage
+- Role-based authorization
+- Persistent database storage
+- Secure Speechmatics server integration
+- Municipal ticketing API integration
+- Officer notification webhooks
+- Production-grade moderation and abuse prevention
 
 ---
 
-*Built with ❤️ for Dehradun · Powered by Speechmatics, Leaflet, OpenStreetMap & open web standards*
+## Future Roadmap
+
+- Integration with municipal ticketing systems
+- Kannada, Hindi, and additional regional-language support
+- Phone-call reporting through Twilio or SIP
+- Photo evidence with EXIF location sanitization
+- Secure resident and officer accounts
+- Push notifications for issue updates
+- Automatic dispatch to the correct civic department
+- Historical civic analytics and response-time reporting
+
+---
+
+## Project Vision
+
+CrowdFix turns fragmented community voices into organized civic evidence—and turns civic evidence into action.
+
+---
+
+## Credits
+
+Built for the Speechmatics hackathon challenge.
+
+Powered by:
+- [Speechmatics](https://www.speechmatics.com/)
+- [Leaflet](https://leafletjs.com/)
+- [OpenStreetMap](https://www.openstreetmap.org/)

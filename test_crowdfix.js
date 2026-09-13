@@ -847,6 +847,97 @@ test('Location fallback strictly anchors to Dehradun, Uttarakhand without extern
   assert(!js.includes('Muzaffarnagar'), 'Muzaffarnagar found in app.js');
 });
 
+console.log('\n🎯 Dehradun Duplicate Clustering Matcher & Seed Protection');
+
+// Extract and evaluate CivicEvidenceParser and DEFAULT_ISSUES from app.js
+const parserStart = js.indexOf('class CivicEvidenceParser');
+const parserEnd = js.indexOf('// -------------------------------------------------------------', parserStart);
+const parserSnippet = 'global.CivicEvidenceParser = ' + js.slice(parserStart, parserEnd).replace('class CivicEvidenceParser', 'class');
+global.state = { currentPlaceName: 'Rajpur Road, Dehradun' };
+eval(parserSnippet);
+
+const dehradunSeedIssues = [
+  {
+    id: 'issue-1',
+    title: 'Large pothole near Clock Tower junction',
+    category: 'ROAD SAFETY',
+    place: 'Rajpur Road, Dehradun',
+    landmark: 'Rajpur Road',
+    status: 'Open'
+  },
+  {
+    id: 'issue-2',
+    title: 'Overflowing bins outside Paltan Bazaar commercial market',
+    category: 'CLEANLINESS',
+    place: 'Paltan Bazaar, Dehradun',
+    landmark: 'Paltan Bazaar',
+    status: 'In Progress'
+  },
+  {
+    id: 'issue-3',
+    title: 'Streetlight not working on Ballupur Chowk road',
+    category: 'PUBLIC LIGHTING',
+    place: 'Ballupur Chowk, Dehradun',
+    landmark: 'Ballupur Chowk',
+    status: 'Open'
+  }
+];
+
+test('Clustering Matcher: English Pothole Rajpur Rd merges into existing cluster issue-1', () => {
+  const ev = CivicEvidenceParser.parse('There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.');
+  const match = CivicEvidenceParser.findClusterMatch(ev, dehradunSeedIssues);
+  assert(match !== null, 'Expected match with issue-1 but got null');
+  assert(match.matchedIssue.id === 'issue-1', `Expected issue-1 but got ${match.matchedIssue.id}`);
+});
+
+test('Clustering Matcher: Clock Tower junction partial merges into issue-1', () => {
+  const ev = CivicEvidenceParser.parse('There is a dangerous pothole near Clock Tower junction');
+  const match = CivicEvidenceParser.findClusterMatch(ev, dehradunSeedIssues);
+  assert(match !== null, 'Expected Clock Tower partial to match issue-1 but got null');
+  assert(match.matchedIssue.id === 'issue-1', `Expected issue-1 but got ${match.matchedIssue.id}`);
+});
+
+test('Clustering Matcher: Hinglish Pothole Rajpur Road merges into issue-1', () => {
+  const ev = CivicEvidenceParser.parse('Rajpur Road Clock Tower ke paas bohot bada gaddha hai, do bikes abhi slip ho gayi dangerous pothole hai.');
+  const match = CivicEvidenceParser.findClusterMatch(ev, dehradunSeedIssues);
+  assert(match !== null, 'Expected Hinglish pothole to match issue-1 but got null');
+  assert(match.matchedIssue.id === 'issue-1', `Expected issue-1 but got ${match.matchedIssue.id}`);
+});
+
+test('Clustering Matcher: Overflowing Bins Paltan Bazaar merges into issue-2', () => {
+  const ev = CivicEvidenceParser.parse('The garbage dump outside Paltan Bazaar commercial market has been overflowing for two days with severe foul smell.');
+  const match = CivicEvidenceParser.findClusterMatch(ev, dehradunSeedIssues);
+  assert(match !== null, 'Expected match with issue-2 but got null');
+  assert(match.matchedIssue.id === 'issue-2', `Expected issue-2 but got ${match.matchedIssue.id}`);
+});
+
+test('Clustering Matcher: Dark Streetlight Ballupur Chowk merges into issue-3', () => {
+  const ev = CivicEvidenceParser.parse('Streetlight has been flickering and completely off on Ballupur Chowk, making the road pitch dark and unsafe.');
+  const match = CivicEvidenceParser.findClusterMatch(ev, dehradunSeedIssues);
+  assert(match !== null, 'Expected match with issue-3 but got null');
+  assert(match.matchedIssue.id === 'issue-3', `Expected issue-3 but got ${match.matchedIssue.id}`);
+});
+
+test('Clustering Matcher: Water Pipeline Burst creates NEW cluster (no match)', () => {
+  const ev = CivicEvidenceParser.parse('A water supply pipeline has burst and is flooding the road near Ballupur Chowk. Clean water is being wasted.');
+  const match = CivicEvidenceParser.findClusterMatch(ev, dehradunSeedIssues);
+  assert(match === null, 'Expected water pipeline to create new cluster, but matched: ' + match?.matchedIssue?.id);
+});
+
+test('Live Preview: Predicts "Will merge into existing cluster" when matched in app.js', () => {
+  assert(js.includes('Will merge into existing cluster: "${match.matchedIssue.title}"'), 'Missing explicit Will merge into existing cluster string');
+});
+
+test('Seed Protection: Background officer auto-resolution excludes issue-1, issue-2, issue-3', () => {
+  assert(js.includes("!['issue-1', 'issue-2', 'issue-3'].includes(issue.id)"), 'Background resolution does not exempt seed issues');
+});
+
+test('State Integrity: loadIssues guarantees active seed demo issues', () => {
+  assert(js.includes('// Safeguard: Ensure core seed demo issues'), 'Missing seed issue safeguard in loadIssues');
+  assert(js.includes("existing.status = 'Open'"), 'Missing auto-restoration of seed issue status in loadIssues');
+});
+
+
 
 // ─────────────────────────────────────────────
 // SUMMARY
