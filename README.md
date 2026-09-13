@@ -140,7 +140,7 @@ node test_crowdfix.js
 **Test Results:**  
 ```
 ────────────────────────────────────────────────────────────
-RESULTS: 246 passed, 0 failed
+RESULTS: 250 passed, 0 failed
 🎉 All tests passed! CrowdFix is demo-ready.
 ────────────────────────────────────────────────────────────
 ```
@@ -150,7 +150,7 @@ RESULTS: 246 passed, 0 failed
 |-------|-------|
 | HTML Structure & Accessibility | IDs, ARIA, semantic elements |
 | CSS Critical Classes | All component classes present |
-| Speechmatics HUD & Language | Streaming, confidence, Hinglish |
+| Speechmatics HUD & Language | Streaming, confidence, Hinglish, Hero HUD |
 | Civic Evidence Parser | 12 English & Hinglish scenarios |
 | Explainable Clustering Logic | 6 merge/create scenarios |
 | Stats & State Logic | Formulas, edge cases |
@@ -163,9 +163,9 @@ RESULTS: 246 passed, 0 failed
 | Share & Export | `navigator.share`, PDF toast |
 | Empty States | All 4 views |
 | Dynamic Timestamps | `timeAgo`, auto-refresh |
-| Seed Data Integrity | 3 issues, testimonies |
+| Seed Data Integrity | 3 issues, Dehradun testimonies & landmarks |
 | Realism (Maps, Auth, Photos) | Nominatim, Clerk, PocketBase, heatmap |
-| Guest Browsing & Auth Guards | 7 access-control scenarios |
+| Guest Browsing & Auth Guards | 11 access-control & demo guest scenarios |
 
 ---
 
@@ -173,13 +173,24 @@ RESULTS: 246 passed, 0 failed
 
 ```
 crowdfix-prototype/
-├── index.html          # Semantic HTML5 SPA shell — guest/auth state, modals, scroll-reveal classes
+├── index.html          # Semantic HTML5 SPA shell — guest/auth state, hero HUD, modals, scroll-reveal classes
 ├── styles.css          # Modern Design System v2.0 — glassmorphism, scroll animations, micro-interactions
 ├── app.js              # Speechmatics telemetry, Civic Parser, Clustering, Auth, Automation, Scroll Reveal
 ├── sw.js               # Service worker for offline caching & Web Push notifications
-├── test_crowdfix.js    # Comprehensive test runner (246 tests covering all logic & UI)
+├── test_crowdfix.js    # Comprehensive test runner (250 tests covering all logic & UI)
 └── README.md           # Documentation, architecture & presentation guide
 ```
+
+---
+
+## 🏆 Hackathon Pitch Highlights
+
+1. **Speechmatics-First:** Voice isn't just an input method — it is the bridge that empowers non-technical citizens and two-wheeler commuters to report problems in seconds.
+2. **Explainability Over Black Boxes:** Both citizens and municipal officers see *why* issues are merged and *how* priority scores are computed.
+3. **Closing the Loop:** Transparent public accountability transforms passive complaining into collective civic action.
+4. **Open by Default:** Anyone can browse the live civic map and evidence feed without an account — lowering the barrier to public engagement.
+5. **Modern & Accessible:** A production-grade UI/UX with glassmorphism, scroll animations, full responsiveness, and keyboard navigation support.
+
 ---
 
 *Built with ❤️ for Dehradun · Powered by Speechmatics, Leaflet, OpenStreetMap & open web standards*

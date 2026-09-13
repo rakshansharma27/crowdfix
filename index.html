@@ -98,6 +98,25 @@
               <p class="hero-tech-note">
                 <strong>Engine:</strong> Speechmatics handles speech understanding input; our civic engine structures and clusters the reports.
               </p>
+
+              <!-- HERO SPEECHMATICS TELEMETRY HUD (LIVE DURING MAIN VOICE INTERACTION) -->
+              <div class="speechmatics-hud hero-hud" id="heroSpeechmaticsHud">
+                <div class="hud-top">
+                  <div class="hud-status">
+                    <span class="hud-dot" id="heroHudDot"></span>
+                    <strong id="heroHudStatusText">Speechmatics Realtime Ready</strong>
+                  </div>
+                  <div class="hud-badges">
+                    <span class="hud-pill" id="heroTelemetryLatencyPill">Latency: <b>~178ms</b></span>
+                    <span class="hud-pill" id="heroTelemetryLangPill">Lang: <b>English &amp; Hinglish</b></span>
+                    <span class="hud-pill" id="heroTelemetryConfidencePill">Confidence: <b>98.4%</b></span>
+                  </div>
+                </div>
+                <div class="hud-interim" id="heroHudInterim">
+                  <span class="interim-label">Voice stream:</span>
+                  <span class="interim-text" id="heroInterimStreamText">Click “⚡ Quick Voice Demo” or “Report an issue” to test Speechmatics live</span>
+                </div>
+              </div>
             </div>
             <div class="hero-orbit" aria-label="Community evidence visualization">
               <div class="orbit orbit-one"></div>
@@ -319,10 +338,19 @@
 
         <div class="pocketbase-status-tag" id="pocketbaseStatusTag">
           <span class="status-dot-green"></span>
-          <span>PocketBase Sync Engine: <b>Connected & Ready</b></span>
+          <span>PocketBase Sync Engine: <b>Connected &amp; Ready</b></span>
         </div>
 
         <p class="auth-switch">Already have an account? <button id="toggleAuth" type="button">Sign in</button></p>
+
+        <!-- Demo Guest Escape Hatch -->
+        <div class="guest-skip-row">
+          <button type="button" class="guest-skip-btn" id="continueAsGuestBtn">
+            <span>👀</span> Continue as Demo Guest
+          </button>
+          <span class="guest-skip-note">Browse map &amp; reports — no account needed</span>
+        </div>
+
         <p class="auth-note">🔒 Privacy first: Your exact GPS is obfuscated to neighborhood level. You can toggle permissions at any time.</p>
       </div>
     </div>
@@ -485,7 +513,7 @@
           </div>
           <div class="matching-criteria-pills" id="detailMatchingCriteria">
             <span class="criteria-pill active">✓ Category: Road Safety</span>
-            <span class="criteria-pill active">✓ Landmark: 80 Feet Road</span>
+            <span class="criteria-pill active">✓ Landmark: Rajpur Road</span>
             <span class="criteria-pill active">✓ Proximity: ~140m</span>
             <span class="criteria-pill active">✓ Semantic Intent: Hazard</span>
           </div>

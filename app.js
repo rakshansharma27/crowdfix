@@ -61,8 +61,8 @@ const DEFAULT_ISSUES = [
     assignedOfficer: 'Snehal Raj (Nagar Nigam Dehradun)',
     testimonies: [
       { id: 't-1', user: 'Arav Sharma', time: '4 min ago', createdAt: new Date(Date.now() - 4 * 60 * 1000).toISOString(), quote: '“There’s a large pothole near the Clock Tower junction on Rajpur Road. Two bikes almost crashed this morning.”', confidence: '99.1%' },
-      { id: 't-2', user: 'Siddharth Menon', time: '2 hours ago', createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), quote: '“Deep asphalt crater right outside the market bend. Huge hazard for two-wheelers.”', confidence: '98.5%' },
-      { id: 't-3', user: 'Kavita Sundaram', time: 'Yesterday', createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(), quote: '“Rain water filled the crater, making it almost invisible at night.”', confidence: '97.8%' }
+      { id: 't-2', user: 'Siddharth Rawat', time: '2 hours ago', createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), quote: '“Deep asphalt crater right outside the market bend on Rajpur Road. Huge hazard for two-wheelers.”', confidence: '98.5%' },
+      { id: 't-3', user: 'Kavita Uniyal', time: 'Yesterday', createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(), quote: '“Rain water filled the crater near Clock Tower junction, making it almost invisible at night.”', confidence: '97.8%' }
     ]
   },
   {
@@ -86,8 +86,8 @@ const DEFAULT_ISSUES = [
     assignedOfficer: 'Snehal Raj (Nagar Nigam Dehradun SWM)',
     officerNote: 'Nagar Nigam Dehradun compactor vehicle UK-07 dispatched for secondary clearance.',
     testimonies: [
-      { id: 't-4', user: 'Vikram Hegde', time: '18 min ago', createdAt: new Date(Date.now() - 18 * 60 * 1000).toISOString(), quote: '“The garbage bins have been full since yesterday and it smells really bad outside the market.”', confidence: '98.8%' },
-      { id: 't-5', user: 'Deepa Krishnan', time: '5 hours ago', createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), quote: '“Commercial market waste dumping outside bins. Sidewalk is blocked.”', confidence: '97.9%' }
+      { id: 't-4', user: 'Vikram Negi', time: '18 min ago', createdAt: new Date(Date.now() - 18 * 60 * 1000).toISOString(), quote: '“The garbage bins have been full since yesterday and it smells really bad outside Paltan Bazaar market.”', confidence: '98.8%' },
+      { id: 't-5', user: 'Deepa Joshi', time: '5 hours ago', createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), quote: '“Commercial market waste dumping outside bins in Paltan Bazaar. Sidewalk is blocked.”', confidence: '97.9%' }
     ]
   },
   {
@@ -110,7 +110,7 @@ const DEFAULT_ISSUES = [
     criteria: ['✓ Category: Public Lighting', '✓ Landmark: Ballupur Chowk', '✓ Single source'],
     assignedOfficer: 'Snehal Raj & UPCL Electrical Division',
     testimonies: [
-      { id: 't-6', user: 'Meera Iyer', time: '31 min ago', createdAt: new Date(Date.now() - 31 * 60 * 1000).toISOString(), quote: '“The streetlight outside the crossing has been out for three nights, making the lane pitch dark.”', confidence: '99.4%' }
+      { id: 't-6', user: 'Meera Pant', time: '31 min ago', createdAt: new Date(Date.now() - 31 * 60 * 1000).toISOString(), quote: '“The streetlight outside Ballupur Chowk crossing has been out for three nights, making the lane pitch dark.”', confidence: '99.4%' }
     ]
   }
 ];
@@ -129,9 +129,9 @@ const DEFAULT_RESOLVED = [
     status: 'Resolved',
     resolvedIn: 'Resolved in 14 hours',
     assignedOfficer: 'Snehal Raj (Nagar Nigam Rapid Action Team)',
-    officerNote: 'Nagar Nigam Dehradun rapid action crew removed the fallen bough and restored two-lane traffic flow.',
+    officerNote: 'Nagar Nigam Dehradun rapid action crew removed the fallen bough and restored two-lane traffic flow on Saharanpur Road.',
     testimonies: [
-      { id: 't-7', user: 'Karthik Raman', time: '2 days ago', quote: '“Large bough snapped during storm blocking the intersection.”', confidence: '98.7%' }
+      { id: 't-7', user: 'Karthik Semwal', time: '2 days ago', quote: '“Large bough snapped during storm blocking Saharanpur Road intersection in Dehradun.”', confidence: '98.7%' }
     ]
   }
 ];
@@ -630,10 +630,24 @@ function setSpeechmaticsHudState(status, latency = '~180ms', confidence = '98.4%
   if (latencyEl) latencyEl.innerHTML = `Latency: <b>${latency}</b>`;
   if (confidenceEl) confidenceEl.innerHTML = `Confidence: <b>${confidence}</b>`;
 
+  // Hero Speechmatics HUD elements (visible on main landing view during voice interaction)
+  const heroStatusEl = document.querySelector('#heroHudStatusText');
+  const heroHudEl = document.querySelector('#heroSpeechmaticsHud');
+  const heroLatencyEl = document.querySelector('#heroTelemetryLatencyPill');
+  const heroConfidenceEl = document.querySelector('#heroTelemetryConfidencePill');
+
+  if (heroStatusEl) heroStatusEl.textContent = status;
+  if (heroLatencyEl) heroLatencyEl.innerHTML = `Latency: <b>${latency}</b>`;
+  if (heroConfidenceEl) heroConfidenceEl.innerHTML = `Confidence: <b>${confidence}</b>`;
+
   // Toggle CSS classes so animated pulse dot works via CSS
   if (hudEl) {
     hudEl.classList.toggle('streaming', isStreaming);
     hudEl.classList.toggle('finalized', !isStreaming && status.startsWith('✓'));
+  }
+  if (heroHudEl) {
+    heroHudEl.classList.toggle('streaming', isStreaming);
+    heroHudEl.classList.toggle('finalized', !isStreaming && status.startsWith('✓'));
   }
 
   if (soundWave) {
@@ -645,6 +659,10 @@ function updateInterimStream(text) {
   const streamEl = document.querySelector('#interimStreamText');
   if (streamEl) {
     streamEl.textContent = text || 'Waiting for voice input...';
+  }
+  const heroStreamEl = document.querySelector('#heroInterimStreamText');
+  if (heroStreamEl) {
+    heroStreamEl.textContent = text || 'Waiting for voice input...';
   }
 }
 
@@ -667,36 +685,43 @@ function startSpeechmaticsSimulation(sampleText, onComplete) {
   // Realtime Language Identification: English vs Hinglish
   const lang = detectLanguage(sampleText);
   const langPill = document.querySelector('#telemetryLangPill');
-  if (langPill) {
-    langPill.innerHTML = lang.code === 'en-IN/hi'
-      ? `Lang: <b style="color:var(--orange)">Hinglish</b>`
-      : `Lang: <b>English</b>`;
-  }
+  const heroLangPill = document.querySelector('#heroTelemetryLangPill');
+  const langHtml = lang.code === 'en-IN/hi'
+    ? `Lang: <b style="color:var(--orange)">Hinglish</b>`
+    : `Lang: <b>English</b>`;
+  if (langPill) langPill.innerHTML = langHtml;
+  if (heroLangPill) heroLangPill.innerHTML = langHtml;
 
   setSpeechmaticsHudState('● Speechmatics Realtime Stream Active', '~174ms', '97.2%', true);
 
   const words = sampleText.split(' ');
   let index = 0;
   const textArea = document.querySelector('#reportText');
-  textArea.value = '';
+  if (textArea) textArea.value = '';
 
   clearInterval(streamingTimer);
   streamingTimer = setInterval(() => {
     if (index < words.length) {
       const currentPartial = words.slice(0, index + 1).join(' ');
       updateInterimStream(`Interim [${index + 1}/${words.length}]: "${currentPartial}"`);
-      textArea.value = currentPartial;
+      if (textArea) textArea.value = currentPartial;
 
       // Dynamic simulated latency jitter (170–195ms)
       const jitterLatency = Math.floor(170 + Math.random() * 25);
       const latencyPill = document.querySelector('#telemetryLatencyPill');
-      if (latencyPill) latencyPill.innerHTML = `Latency: <b>~${jitterLatency}ms</b>`;
+      const heroLatencyPill = document.querySelector('#heroTelemetryLatencyPill');
+      const latencyHtml = `Latency: <b>~${jitterLatency}ms</b>`;
+      if (latencyPill) latencyPill.innerHTML = latencyHtml;
+      if (heroLatencyPill) heroLatencyPill.innerHTML = latencyHtml;
 
       // Realistic confidence that increases as more words are confirmed
       const progress = (index + 1) / words.length;
       const confidence = (96.0 + progress * 2.5 + Math.random() * 0.4).toFixed(1);
       const confPill = document.querySelector('#telemetryConfidencePill');
-      if (confPill) confPill.innerHTML = `Confidence: <b>${confidence}%</b>`;
+      const heroConfPill = document.querySelector('#heroTelemetryConfidencePill');
+      const confHtml = `Confidence: <b>${confidence}%</b>`;
+      if (confPill) confPill.innerHTML = confHtml;
+      if (heroConfPill) heroConfPill.innerHTML = confHtml;
 
       // Live parsing preview & language detection
       updateParserLivePreview(currentPartial);
@@ -724,11 +749,12 @@ function updateParserLivePreview(text) {
   if (text && text.trim().length >= 3) {
     const lang = detectLanguage(text);
     const langPill = document.querySelector('#telemetryLangPill');
-    if (langPill) {
-      langPill.innerHTML = lang.code === 'en-IN/hi'
-        ? `Lang: <b style="color:var(--orange)">Hinglish</b>`
-        : `Lang: <b>English</b>`;
-    }
+    const heroLangPill = document.querySelector('#heroTelemetryLangPill');
+    const langHtml = lang.code === 'en-IN/hi'
+      ? `Lang: <b style="color:var(--orange)">Hinglish</b>`
+      : `Lang: <b>English</b>`;
+    if (langPill) langPill.innerHTML = langHtml;
+    if (heroLangPill) heroLangPill.innerHTML = langHtml;
   }
 
   if (catPill) catPill.innerHTML = `Category: <b>${evidence.category}</b>`;
@@ -750,7 +776,7 @@ function startNativeSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     // Graceful fallback with rich demo prompt
-    const demoPrompt = "There is a dangerous pothole near the metro station on 80 Feet Road. Two bikes almost skidded this morning.";
+    const demoPrompt = "There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.";
     startSpeechmaticsSimulation(demoPrompt);
     return;
   }
@@ -790,7 +816,7 @@ function startNativeSpeechRecognition() {
 
     speechRecognition.start();
   } catch (e) {
-    const demoPrompt = "There is a dangerous pothole near the metro station on 80 Feet Road. Two bikes almost skidded this morning.";
+    const demoPrompt = "There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.";
     startSpeechmaticsSimulation(demoPrompt);
   }
 }
@@ -815,7 +841,7 @@ function stopVoiceRecordingUI() {
 
   if (btn) btn.classList.remove('recording');
   if (title) title.textContent = 'Tap microphone to start speaking';
-  if (hint) hint.textContent = 'Describe the issue and landmark (e.g. “Large pothole near metro on 80 Feet Road”)';
+  if (hint) hint.textContent = 'Describe the issue and landmark (e.g. “Large pothole near Clock Tower on Rajpur Road”)';
   if (wave) wave.classList.remove('active');
 }
 
@@ -1571,6 +1597,13 @@ function setupAuthAndProfile() {
 
   // Auth modal close handlers & topbar sign in
   document.querySelector('#closeAuthModal')?.addEventListener('click', closeAuthModal);
+  document.querySelector('#continueAsGuestBtn')?.addEventListener('click', () => {
+    state.saveAccount(null);
+    closeAuthModal();
+    updateDynamicHeader();
+    renderAllViews();
+    showToast('👀 Browsing as Demo Guest. Explore live maps, reports & clusters freely!');
+  });
   document.querySelector('#authModal')?.addEventListener('click', (e) => {
     if (e.target.id === 'authModal') closeAuthModal();
   });
@@ -1893,16 +1926,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Quick Demo Buttons
   document.querySelector('#heroQuickDemo')?.addEventListener('click', () => {
+    const demoPrompt = "There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.";
+    
+    // Activate Speechmatics HUD on the main view immediately
+    startSpeechmaticsSimulation(demoPrompt);
+
     if (!state.account) {
-      showToast('Please sign in or create an account to file a complaint.');
-      openAuthModal('Please sign in or create an account to try the voice demo.');
-      return;
+      // Auto-enable demo guest session so the modal and voice pipeline can be demonstrated seamlessly
+      state.saveAccount({
+        name: 'Rakshan Sharma (Demo Guest)',
+        email: 'rakshan.demo@dehradun.civic',
+        role: 'resident'
+      });
+      updateDynamicHeader();
+      showToast('⚡ Speechmatics live stream started! Opening civic evidence pipeline...');
     }
     openReportModal();
-    setTimeout(() => {
-      const demoPrompt = "There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.";
-      startSpeechmaticsSimulation(demoPrompt);
-    }, 300);
   });
 
   // 1-Tap Demo Chips (Hackathon Judges Quick Testing)
@@ -1958,7 +1997,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.serviceWorker.controller.postMessage({ type: 'DEMO_ALERT' });
       }
       new Notification('CrowdFix Ward Alert', {
-        body: 'Subscribed to real-time status updates on 80 Feet Road & 6th Block.',
+        body: 'Subscribed to real-time status updates on Rajpur Road & Paltan Bazaar, Dehradun.',
         icon: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png'
       });
     } else if (Notification.permission !== 'denied') {

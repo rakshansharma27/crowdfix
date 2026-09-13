@@ -802,6 +802,35 @@ test('Issue resolution and status update is protected by officer role check', ()
   assert(js.includes("state.account.role !== 'officer'"), 'handleOfficerStatusUpdate is missing officer role guard');
 });
 
+test('Continue as Demo Guest button present in auth modal and wired in app.js', () => {
+  assert(html.includes('id="continueAsGuestBtn"'), 'Missing continueAsGuestBtn in index.html');
+  assert(html.includes('Continue as Demo Guest'), 'Missing Continue as Demo Guest text in index.html');
+  assert(js.includes('#continueAsGuestBtn'), 'Missing continueAsGuestBtn listener in app.js');
+});
+
+test('Hero Speechmatics HUD present on main landing view for live voice interaction', () => {
+  assert(html.includes('id="heroSpeechmaticsHud"'), 'Missing heroSpeechmaticsHud in index.html');
+  assert(html.includes('id="heroHudStatusText"'), 'Missing heroHudStatusText in index.html');
+  assert(html.includes('id="heroTelemetryLatencyPill"'), 'Missing heroTelemetryLatencyPill in index.html');
+  assert(html.includes('id="heroTelemetryLangPill"'), 'Missing heroTelemetryLangPill in index.html');
+  assert(html.includes('id="heroTelemetryConfidencePill"'), 'Missing heroTelemetryConfidencePill in index.html');
+  assert(html.includes('id="heroInterimStreamText"'), 'Missing heroInterimStreamText in index.html');
+});
+
+test('Speechmatics HUD in hero is wired to streaming telemetry in app.js', () => {
+  assert(js.includes('#heroSpeechmaticsHud'), 'Missing #heroSpeechmaticsHud reference in app.js');
+  assert(js.includes('#heroTelemetryLatencyPill'), 'Missing #heroTelemetryLatencyPill reference in app.js');
+  assert(js.includes('#heroTelemetryConfidencePill'), 'Missing #heroTelemetryConfidencePill reference in app.js');
+});
+
+test('All default civic issues and testimonies aligned with Dehradun, Uttarakhand', () => {
+  assert(js.includes("place: 'Rajpur Road, Dehradun'"), 'Missing Rajpur Road, Dehradun in seed issues');
+  assert(js.includes("place: 'Paltan Bazaar, Dehradun'"), 'Missing Paltan Bazaar, Dehradun in seed issues');
+  assert(js.includes("place: 'Ballupur Chowk, Dehradun'"), 'Missing Ballupur Chowk, Dehradun in seed issues');
+  assert(js.includes("place: 'Saharanpur Road, Dehradun'"), 'Missing Saharanpur Road, Dehradun in seed issues');
+  assert(!html.includes('✓ Landmark: 80 Feet Road'), 'Found legacy 80 Feet Road landmark in index.html');
+});
+
 
 // ─────────────────────────────────────────────
 // SUMMARY
