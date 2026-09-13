@@ -9,7 +9,7 @@
  * 5. Interactive Mapping: Leaflet.js with OpenStreetMap attribution.
  */
 
-// Authentic Community & Public-Service Accounts (Real Dehradun Civic Actors)
+// Authentic Community & Public-Service Accounts
 const REAL_ACCOUNTS = {
   'resident-rakshan': {
     id: 'resident-rakshan',
@@ -19,31 +19,22 @@ const REAL_ACCOUNTS = {
     area: 'Rajpur Road, Dehradun',
     bio: 'Civic active resident · 4 reports filed, 7 corroborated'
   },
-  'resident-ananya': {
-    id: 'resident-ananya',
-    name: 'Ananya Rao',
-    email: 'ananya.rao@outlook.in',
+  'resident-arav': {
+    id: 'resident-arav',
+    name: 'Arav Sharma',
+    email: 'arav.sharma@outlook.com',
     role: 'resident',
     area: 'Ballupur Chowk, Dehradun',
-    bio: 'Daily commuter & student · Prem Nagar corridor'
+    bio: 'Daily commuter & student · Prem Nagar campus corridor'
   },
-  'officer-suresh': {
-    id: 'officer-suresh',
-    name: 'Er. Suresh Kumar',
-    email: 'suresh.kumar@nagarnigamdehradun.gov.in',
+  'officer-snehal': {
+    id: 'officer-snehal',
+    name: 'Snehal Raj',
+    email: 'snehal.raj@nagarnigamdehradun.gov.in',
     role: 'officer',
-    area: 'Nagar Nigam Dehradun (Ward 24 - Rajpur)',
-    title: 'Assistant Executive Engineer (Road Works & MDDA Liaison)',
-    bio: 'Nagar Nigam Dehradun Rapid Road Maintenance Unit · Dispatch authority'
-  },
-  'officer-priya': {
-    id: 'officer-priya',
-    name: 'Priya Nambiar',
-    email: 'priya.nambiar@nagarnigamdehradun.gov.in',
-    role: 'officer',
-    area: 'Nagar Nigam Dehradun Sanitation Division',
-    title: 'Chief Municipal Health & Sanitation Officer',
-    bio: 'Nagar Nigam Dehradun SWM Division · Compactor & sweep logistics'
+    area: 'Nagar Nigam Dehradun (Civic Works & SWM)',
+    title: 'Executive Engineer & Rapid Action Unit Lead',
+    bio: 'Nagar Nigam Dehradun Municipal Operations · Triage & dispatch authority'
   }
 };
 
@@ -67,9 +58,9 @@ const DEFAULT_ISSUES = [
     createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
     clusteringReason: 'Merged because category, landmark, and location matched.',
     criteria: ['✓ Category: Road Safety', '✓ Landmark: Rajpur Road', '✓ Proximity: ~140m', '✓ Hazard corroboration'],
-    assignedOfficer: 'Er. Suresh Kumar (Nagar Nigam Dehradun Roads)',
+    assignedOfficer: 'Snehal Raj (Nagar Nigam Dehradun)',
     testimonies: [
-      { id: 't-1', user: 'Ananya Rao', time: '4 min ago', createdAt: new Date(Date.now() - 4 * 60 * 1000).toISOString(), quote: '“There’s a large pothole near the Clock Tower junction on Rajpur Road. Two bikes almost crashed this morning.”', confidence: '99.1%' },
+      { id: 't-1', user: 'Arav Sharma', time: '4 min ago', createdAt: new Date(Date.now() - 4 * 60 * 1000).toISOString(), quote: '“There’s a large pothole near the Clock Tower junction on Rajpur Road. Two bikes almost crashed this morning.”', confidence: '99.1%' },
       { id: 't-2', user: 'Siddharth Menon', time: '2 hours ago', createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), quote: '“Deep asphalt crater right outside the market bend. Huge hazard for two-wheelers.”', confidence: '98.5%' },
       { id: 't-3', user: 'Kavita Sundaram', time: 'Yesterday', createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(), quote: '“Rain water filled the crater, making it almost invisible at night.”', confidence: '97.8%' }
     ]
@@ -92,7 +83,7 @@ const DEFAULT_ISSUES = [
     createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
     clusteringReason: 'Merged because category, landmark, and location matched.',
     criteria: ['✓ Category: Cleanliness', '✓ Landmark: Paltan Bazaar', '✓ Proximity: ~95m'],
-    assignedOfficer: 'Priya Nambiar (Nagar Nigam Dehradun SWM)',
+    assignedOfficer: 'Snehal Raj (Nagar Nigam Dehradun SWM)',
     officerNote: 'Nagar Nigam Dehradun compactor vehicle UK-07 dispatched for secondary clearance.',
     testimonies: [
       { id: 't-4', user: 'Vikram Hegde', time: '18 min ago', createdAt: new Date(Date.now() - 18 * 60 * 1000).toISOString(), quote: '“The garbage bins have been full since yesterday and it smells really bad outside the market.”', confidence: '98.8%' },
@@ -117,7 +108,7 @@ const DEFAULT_ISSUES = [
     createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
     clusteringReason: 'Single community testimony. Awaiting corroboration or officer review.',
     criteria: ['✓ Category: Public Lighting', '✓ Landmark: Ballupur Chowk', '✓ Single source'],
-    assignedOfficer: 'UPCL / Nagar Nigam Electrical Division',
+    assignedOfficer: 'Snehal Raj & UPCL Electrical Division',
     testimonies: [
       { id: 't-6', user: 'Meera Iyer', time: '31 min ago', createdAt: new Date(Date.now() - 31 * 60 * 1000).toISOString(), quote: '“The streetlight outside the crossing has been out for three nights, making the lane pitch dark.”', confidence: '99.4%' }
     ]
@@ -137,7 +128,7 @@ const DEFAULT_RESOLVED = [
     priority: 'High',
     status: 'Resolved',
     resolvedIn: 'Resolved in 14 hours',
-    assignedOfficer: 'Er. Suresh Kumar (Nagar Nigam Rapid Action Team)',
+    assignedOfficer: 'Snehal Raj (Nagar Nigam Rapid Action Team)',
     officerNote: 'Nagar Nigam Dehradun rapid action crew removed the fallen bough and restored two-lane traffic flow.',
     testimonies: [
       { id: 't-7', user: 'Karthik Raman', time: '2 days ago', quote: '“Large bough snapped during storm blocking the intersection.”', confidence: '98.7%' }
@@ -162,12 +153,16 @@ class CrowdFixState {
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
-    return { name: 'Rakshan', email: 'rakshan@civic.org', role: 'resident' };
+    return null; // Guest browsing mode by default
   }
 
   saveAccount(acc) {
     this.account = acc;
-    localStorage.setItem('crowdfix_account', JSON.stringify(acc));
+    if (acc) {
+      localStorage.setItem('crowdfix_account', JSON.stringify(acc));
+    } else {
+      localStorage.removeItem('crowdfix_account');
+    }
   }
 
   loadIssues() {
@@ -265,9 +260,12 @@ function updateDynamicHeader() {
   if (hour >= 4 && hour < 12) greetingTime = 'Good morning';
   else if (hour >= 12 && hour < 17) greetingTime = 'Good afternoon';
 
-  const userDisplayName = state.account.role === 'officer' 
-    ? `Officer ${state.account.name.split(' ')[0]}`
-    : state.account.name.split(' ')[0];
+  const isGuest = !state.account;
+  const userDisplayName = isGuest 
+    ? 'Neighbor'
+    : (state.account.role === 'officer' 
+        ? `Officer ${(state.account.name || '').split(' ')[0]}`
+        : (state.account.name || '').split(' ')[0] || 'Resident');
 
   const greetingEl = document.querySelector('#topbarGreeting');
   if (greetingEl) {
@@ -275,20 +273,26 @@ function updateDynamicHeader() {
   }
 
   // Update Avatars & Sidebar Identity
-  const initials = state.account.name
-    .split(' ')
-    .filter(Boolean)
-    .map(part => part[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase() || 'RS';
+  const initials = isGuest
+    ? '👤'
+    : ((state.account.name || '')
+        .split(' ')
+        .filter(Boolean)
+        .map(part => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase() || 'RS');
 
   const topAvatar = document.querySelector('#topbarAvatar');
   const sideAvatar = document.querySelector('#sidebarAvatar');
   const modalAvatar = document.querySelector('#modalAvatarLarge');
+  const topbarSignInBtn = document.querySelector('#topbarSignInBtn');
+  const btnSignOut = document.querySelector('#btnSignOut');
+
   if (topAvatar) topAvatar.textContent = initials;
   if (sideAvatar) sideAvatar.textContent = initials;
   if (modalAvatar) modalAvatar.textContent = initials;
+  if (topbarSignInBtn) topbarSignInBtn.style.display = isGuest ? 'inline-flex' : 'none';
 
   const sideName = document.querySelector('#sidebarUserName');
   const sideRole = document.querySelector('#sidebarUserRole');
@@ -298,14 +302,18 @@ function updateDynamicHeader() {
   const modalEmail = document.querySelector('#modalUserEmail');
   const modalRoleBadge = document.querySelector('#modalRoleBadge');
 
-  const isOfficer = state.account.role === 'officer';
-  if (sideName) sideName.textContent = state.account.name;
-  if (sideRole) sideRole.textContent = isOfficer ? 'Public-service Team' : 'Resident';
-  if (sideRoleTitle) sideRoleTitle.textContent = isOfficer ? 'Officer Mode' : 'Resident Mode';
-  if (sideRoleDesc) sideRoleDesc.textContent = isOfficer ? 'Nagar Nigam Dehradun / Civic Ops Live' : 'Tap profile to switch role';
-  if (modalName) modalName.textContent = state.account.name;
-  if (modalEmail) modalEmail.textContent = state.account.email;
-  if (modalRoleBadge) modalRoleBadge.textContent = isOfficer ? 'Public-service Team (Nagar Nigam)' : 'Resident';
+  const isOfficer = !isGuest && state.account.role === 'officer';
+  if (sideName) sideName.textContent = isGuest ? 'Guest User' : state.account.name;
+  if (sideRole) sideRole.textContent = isGuest ? 'Public Browsing' : (isOfficer ? 'Public-service Team' : 'Resident');
+  if (sideRoleTitle) sideRoleTitle.textContent = isGuest ? 'Public Civic Map' : (isOfficer ? 'Officer Mode' : 'Resident Mode');
+  if (sideRoleDesc) sideRoleDesc.textContent = isGuest ? 'Tap to sign in or register' : (isOfficer ? 'Nagar Nigam Dehradun / Civic Ops Live' : 'Tap profile to switch role');
+  if (modalName) modalName.textContent = isGuest ? 'Guest User' : state.account.name;
+  if (modalEmail) modalEmail.textContent = isGuest ? 'Browsing Mode (Sign in to report or resolve)' : state.account.email;
+  if (modalRoleBadge) modalRoleBadge.textContent = isGuest ? 'Guest' : (isOfficer ? 'Public-service Team (Nagar Nigam)' : 'Resident');
+  if (btnSignOut) {
+    btnSignOut.textContent = isGuest ? 'Sign In / Register' : 'Sign Out';
+    btnSignOut.className = isGuest ? 'primary-button small' : 'secondary-button small text-danger';
+  }
 }
 
 // -------------------------------------------------------------
@@ -947,7 +955,7 @@ function setupKeyboardShortcuts() {
     }
     if (e.key === 'Escape') {
       // Close any open modal
-      ['reportModal','issueDetailModal','profileModal','helpModal']
+      ['reportModal','issueDetailModal','profileModal','helpModal','authModal']
         .forEach(id => { const el = document.querySelector(`#${id}`); if (el) el.hidden = true; });
       clearInterval(slaCountdownTimer);
     }
@@ -959,6 +967,12 @@ function setupKeyboardShortcuts() {
 // REPORT SUBMISSION & EXPLAINABLE CLUSTERING PIPELINE
 // -------------------------------------------------------------
 function handleReportSubmission() {
+  if (!state.account) {
+    showToast('Please sign in or create an account to file a complaint.');
+    openAuthModal('Please sign in or create an account to file a complaint.');
+    return;
+  }
+
   const textArea = document.querySelector('#reportText');
   const content = textArea ? textArea.value.trim() : '';
 
@@ -1361,7 +1375,7 @@ function openIssueDetailModal(id) {
   `).join('') || '<p style="font-size:11px;color:var(--muted);">No linked testimonies recorded.</p>';
 
   // Role visibility: Resident vs Officer
-  const isOfficer = state.account.role === 'officer';
+  const isOfficer = state.account && state.account.role === 'officer';
   const officerPanel = document.querySelector('#officerControlPanel');
   const residentBox = document.querySelector('#residentActionBox');
 
@@ -1388,6 +1402,11 @@ function closeIssueDetailModal() {
 
 // Resident Action: +1 Add My Voice
 function addMyVoiceToCurrentIssue() {
+  if (!state.account) {
+    showToast('Please sign in or create an account to corroborate this issue.');
+    openAuthModal('Please sign in or create an account to corroborate this issue.');
+    return;
+  }
   if (!state.selectedIssueId) return;
   const issue = state.issues.find(i => i.id === state.selectedIssueId);
   if (!issue) return;
@@ -1415,6 +1434,15 @@ function addMyVoiceToCurrentIssue() {
 
 // Officer Action: Update Civic Status & Resolution Note
 function handleOfficerStatusUpdate() {
+  if (!state.account) {
+    showToast('Please sign in with a public-service account to update this report.');
+    openAuthModal('Please sign in with a public-service account to update or resolve issues.');
+    return;
+  }
+  if (state.account.role !== 'officer') {
+    showToast('Only public-service officers can update or resolve issues.');
+    return;
+  }
   if (!state.selectedIssueId) return;
   const newStatus = document.querySelector('#officerStatusSelect')?.value || 'Open';
   const note = document.querySelector('#officerNoteInput')?.value.trim() || 'Nagar Nigam Dehradun team inspected and updated status.';
@@ -1495,12 +1523,6 @@ function setupAuthAndProfile() {
   let selectedRole = 'resident';
   let isSignIn = false;
 
-  // Check if first-time user
-  const savedAcc = localStorage.getItem('crowdfix_account');
-  if (!savedAcc) {
-    authModal.hidden = false;
-  }
-
   document.querySelectorAll('.role-button').forEach(btn => {
     btn.addEventListener('click', () => {
       selectedRole = btn.dataset.role;
@@ -1514,14 +1536,23 @@ function setupAuthAndProfile() {
     authSubmit.innerHTML = isSignIn ? 'Sign in <span>→</span>' : 'Create account <span>→</span>';
     toggleAuth.textContent = isSignIn ? 'Create an account' : 'Sign in';
     if (nameContainer) nameContainer.style.display = isSignIn ? 'none' : 'block';
+    const nameInput = document.querySelector('#authName');
+    if (nameInput) nameInput.required = !isSignIn;
   });
 
   authForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     const nameInput = document.querySelector('#authName');
     const emailInput = document.querySelector('#authEmail');
-    const nameVal = (!isSignIn && nameInput) ? nameInput.value.trim() : (nameInput?.value || 'Rakshan');
-    const emailVal = emailInput ? emailInput.value.trim() : 'rakshan@civic.org';
+    const emailVal = emailInput ? emailInput.value.trim() : '';
+    let nameVal = '';
+    if (!isSignIn && nameInput) {
+      nameVal = nameInput.value.trim();
+    } else {
+      const emailPrefix = emailVal.split('@')[0] || 'Resident';
+      nameVal = emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1);
+    }
+    if (!nameVal) nameVal = selectedRole === 'officer' ? 'Public-Service Officer' : 'Civic Resident';
 
     state.saveAccount({
       name: nameVal,
@@ -1532,18 +1563,25 @@ function setupAuthAndProfile() {
     state.userLocationConsent = document.querySelector('#locationConsent')?.checked !== false;
     localStorage.setItem('crowdfix_loc_consent', state.userLocationConsent);
 
-    authModal.hidden = true;
-    showToast(`Signed in as ${selectedRole === 'officer' ? 'Public-service team' : 'Resident'}.`);
+    closeAuthModal();
+    showToast(`Welcome, ${nameVal}! Signed in as ${selectedRole === 'officer' ? 'Public-service Team' : 'Resident'}.`);
     updateDynamicHeader();
     renderAllViews();
   });
+
+  // Auth modal close handlers & topbar sign in
+  document.querySelector('#closeAuthModal')?.addEventListener('click', closeAuthModal);
+  document.querySelector('#authModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'authModal') closeAuthModal();
+  });
+  document.querySelector('#topbarSignInBtn')?.addEventListener('click', () => openAuthModal());
 
   // Profile modal role switch options & Real Account Cards
   const btnResident = document.querySelector('#btnSwitchResident');
   const btnOfficer = document.querySelector('#btnSwitchOfficer');
 
   function updateRoleButtons() {
-    const isOfficer = state.account.role === 'officer';
+    const isOfficer = state.account && state.account.role === 'officer';
     btnResident?.classList.toggle('active', !isOfficer);
     btnOfficer?.classList.toggle('active', isOfficer);
 
@@ -1551,7 +1589,7 @@ function setupAuthAndProfile() {
     document.querySelectorAll('.account-card').forEach(card => {
       const accId = card.dataset.accountId;
       const acc = REAL_ACCOUNTS[accId];
-      const isCurrent = acc && acc.email === state.account.email;
+      const isCurrent = state.account && acc && acc.email === state.account.email;
       card.classList.toggle('active', !!isCurrent);
     });
   }
@@ -1578,12 +1616,13 @@ function setupAuthAndProfile() {
 
   btnResident?.addEventListener('click', () => {
     const defaultRes = REAL_ACCOUNTS['resident-rakshan'];
-    state.account.role = 'resident';
-    if (state.account.role !== 'resident') {
-      state.account.name = defaultRes.name;
-      state.account.email = defaultRes.email;
-    }
-    state.saveAccount(state.account);
+    const currentName = (state.account && state.account.name) ? state.account.name : defaultRes.name;
+    const currentEmail = (state.account && state.account.email) ? state.account.email : defaultRes.email;
+    state.saveAccount({
+      name: currentName,
+      email: currentEmail,
+      role: 'resident'
+    });
     updateRoleButtons();
     updateDynamicHeader();
     renderAllViews();
@@ -1591,10 +1630,12 @@ function setupAuthAndProfile() {
   });
 
   btnOfficer?.addEventListener('click', () => {
-    const defaultOff = REAL_ACCOUNTS['officer-suresh'];
+    const defaultOff = REAL_ACCOUNTS['officer-snehal'];
+    const currentName = (state.account && state.account.name && state.account.name !== 'Rakshan Sharma') ? state.account.name : defaultOff.name;
+    const currentEmail = (state.account && state.account.email && !state.account.email.includes('gmail')) ? state.account.email : defaultOff.email;
     state.saveAccount({
-      name: defaultOff.name,
-      email: defaultOff.email,
+      name: currentName,
+      email: currentEmail,
       role: 'officer'
     });
     updateRoleButtons();
@@ -1611,19 +1652,43 @@ function setupAuthAndProfile() {
     showToast('Demo data successfully reset to clean hackathon baseline.');
   });
 
-  // Sign Out
+  // Sign Out or Sign In from profile modal
   document.querySelector('#btnSignOut')?.addEventListener('click', () => {
-    localStorage.removeItem('crowdfix_account');
-    closeProfileModal();
-    authModal.hidden = false;
+    if (!state.account) {
+      closeProfileModal();
+      openAuthModal();
+    } else {
+      state.saveAccount(null);
+      closeProfileModal();
+      updateDynamicHeader();
+      renderAllViews();
+      showToast('Signed out. You are now browsing as a guest.');
+    }
   });
+}
+
+function openAuthModal(customSubtitle) {
+  const modal = document.querySelector('#authModal');
+  if (!modal) return;
+  const subtitle = document.querySelector('#authSubtitle');
+  if (subtitle && customSubtitle) {
+    subtitle.textContent = customSubtitle;
+  } else if (subtitle) {
+    subtitle.textContent = 'Choose how you use CrowdFix so we can show you the right tools.';
+  }
+  modal.hidden = false;
+}
+
+function closeAuthModal() {
+  const modal = document.querySelector('#authModal');
+  if (modal) modal.hidden = true;
 }
 
 function openProfileModal() {
   const modal = document.querySelector('#profileModal');
   if (modal) {
     updateDynamicHeader();
-    const isOfficer = state.account.role === 'officer';
+    const isOfficer = state.account && state.account.role === 'officer';
     document.querySelector('#btnSwitchResident')?.classList.toggle('active', !isOfficer);
     document.querySelector('#btnSwitchOfficer')?.classList.toggle('active', isOfficer);
     modal.hidden = false;
@@ -1639,6 +1704,11 @@ function closeProfileModal() {
 // REPORT MODAL CONTROLS
 // -------------------------------------------------------------
 function openReportModal() {
+  if (!state.account) {
+    showToast('Please sign in or create an account to file a complaint.');
+    openAuthModal('Please sign in or create an account to file a complaint.');
+    return;
+  }
   const modal = document.querySelector('#reportModal');
   const textArea = document.querySelector('#reportText');
   if (modal) modal.hidden = false;
@@ -1823,9 +1893,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Quick Demo Buttons
   document.querySelector('#heroQuickDemo')?.addEventListener('click', () => {
+    if (!state.account) {
+      showToast('Please sign in or create an account to file a complaint.');
+      openAuthModal('Please sign in or create an account to try the voice demo.');
+      return;
+    }
     openReportModal();
     setTimeout(() => {
-      const demoPrompt = "There is a dangerous pothole near the metro station on 80 Feet Road. Two bikes almost skidded this morning.";
+      const demoPrompt = "There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.";
       startSpeechmaticsSimulation(demoPrompt);
     }, 300);
   });
@@ -1906,13 +1981,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Clerk Social Login (Google OAuth)
   document.querySelector('#clerkGoogleBtn')?.addEventListener('click', () => {
     // In production, Clerk.openSignIn() handles the OAuth flow.
-    // For seamless immediate demo, authenticate with real Google profile simulation.
+    // Authenticate with verified Google profile simulation without hardcoded personal details.
     state.saveAccount({
-      name: 'Rakshan Sharma (Google)',
-      email: 'rakshan.sharma@gmail.com',
+      name: 'Google Citizen',
+      email: 'citizen.google@gmail.com',
       role: 'resident'
     });
-    document.querySelector('#authModal').hidden = true;
+    closeAuthModal();
     showToast('Signed in via Clerk with Google credentials.');
     updateDynamicHeader();
     renderAllViews();
@@ -2223,3 +2298,43 @@ document.addEventListener('DOMContentLoaded', () => {
   // Start the continuous randomized civic engine
   scheduleNextCivicEvent();
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL REVEAL — Intersection Observer driven entrance animations
+   Watches .reveal, .reveal-left, .reveal-scale and adds .visible
+   when the element enters the viewport.
+   ═══════════════════════════════════════════════════════════════ */
+(function initScrollReveal() {
+  const selectors = '.reveal, .reveal-left, .reveal-scale';
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // fire once
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+  );
+
+  function observeAll() {
+    document.querySelectorAll(selectors).forEach((el) => {
+      if (!el.classList.contains('visible')) {
+        observer.observe(el);
+      }
+    });
+  }
+
+  // Initial scan after DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observeAll);
+  } else {
+    observeAll();
+  }
+
+  // Re-observe after dynamic renders (stat cards, feed items, cluster cards)
+  const mutationObserver = new MutationObserver(() => observeAll());
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
+})();

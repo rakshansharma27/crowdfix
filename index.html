@@ -74,7 +74,8 @@
             </button>
             <span class="live-status"><i></i> Live network</span>
             <button class="icon-button" id="helpButton" title="About CrowdFix & Architecture">?</button>
-            <button class="avatar" id="topbarAvatar" title="Open user profile & role switcher">RS</button>
+            <button class="secondary-button small" id="topbarSignInBtn" style="padding:6px 14px;font-size:12px;font-weight:600;display:none;margin-right:4px;">Sign In</button>
+            <button class="avatar" id="topbarAvatar" title="Open user profile & role switcher">👤</button>
           </div>
         </header>
 
@@ -115,7 +116,7 @@
 
           <!-- Key Metrics -->
           <section class="stats-row">
-            <div class="stat-card">
+            <div class="stat-card reveal stagger-1">
               <span class="stat-icon orange">◉</span>
               <div>
                 <strong id="statTotalReports">24</strong>
@@ -123,7 +124,7 @@
               </div>
               <span class="trend">+18% live</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card reveal stagger-2">
               <span class="stat-icon purple">⌁</span>
               <div>
                 <strong id="statActiveClusters">3</strong>
@@ -131,7 +132,7 @@
               </div>
               <span class="trend neutral">Merged</span>
             </div>
-            <div class="stat-card">
+            <div class="stat-card reveal stagger-3">
               <span class="stat-icon green">✓</span>
               <div>
                 <strong id="statResolvedRate">88%</strong>
@@ -274,10 +275,11 @@
     <!-- ONBOARDING & AUTH MODAL -->
     <div class="modal-backdrop" id="authModal" hidden>
       <div class="auth-modal">
+        <button class="close-button" id="closeAuthModal" aria-label="Close modal">×</button>
         <div class="auth-brand"><span class="brand-mark">✦</span> CrowdFix</div>
-        <p class="eyebrow accent">WELCOME TO YOUR CIVIC NETWORK</p>
+        <p class="eyebrow accent" id="authEyebrow">WELCOME TO YOUR CIVIC NETWORK</p>
         <h2 id="authTitle">Create your CrowdFix account</h2>
-        <p class="modal-intro">Choose how you use CrowdFix so we can show you the right tools.</p>
+        <p class="modal-intro" id="authSubtitle">Choose how you use CrowdFix so we can show you the right tools.</p>
         
         <div class="role-switch">
           <button type="button" class="role-button active" data-role="resident">
@@ -291,14 +293,14 @@
         <form id="authForm">
           <div id="nameFieldContainer">
             <label for="authName">Full name
-              <input id="authName" required placeholder="e.g. Rakshan Sharma" value="Rakshan" />
+              <input id="authName" required placeholder="Enter your full name" autocomplete="name" />
             </label>
           </div>
           <label for="authEmail">Email address
-            <input id="authEmail" type="email" required placeholder="you@example.com" value="rakshan@civic.org" />
+            <input id="authEmail" type="email" required placeholder="name@example.com" autocomplete="email" />
           </label>
           <label for="authPassword">Password
-            <input id="authPassword" type="password" required minlength="6" placeholder="At least 6 characters" value="password123" />
+            <input id="authPassword" type="password" required minlength="6" placeholder="At least 6 characters" autocomplete="current-password" />
           </label>
           <label class="location-consent">
             <input id="locationConsent" type="checkbox" checked />
@@ -583,42 +585,29 @@
             </div>
 
             <!-- Resident Account 2 -->
-            <div class="account-card" data-account-id="resident-ananya">
+            <div class="account-card" data-account-id="resident-arav">
               <div class="account-card-header">
-                <span class="account-avatar resident-bg">AR</span>
+                <span class="account-avatar resident-bg">AS</span>
                 <div>
-                  <strong>Ananya Rao</strong>
+                  <strong>Arav Sharma</strong>
                   <small>Resident · Ballupur Chowk, Dehradun</small>
                 </div>
                 <span class="account-badge">Resident</span>
               </div>
-              <p class="account-desc">Verified commuter. Reported hazardous crater near Clock Tower junction.</p>
+              <p class="account-desc">Verified commuter & student. Daily Prem Nagar campus corridor.</p>
             </div>
 
-            <!-- Public Service Account 1 -->
-            <div class="account-card" data-account-id="officer-suresh">
+            <!-- Public Service Account -->
+            <div class="account-card" data-account-id="officer-snehal">
               <div class="account-card-header">
-                <span class="account-avatar officer-bg">SK</span>
+                <span class="account-avatar officer-bg">SR</span>
                 <div>
-                  <strong>Er. Suresh Kumar</strong>
-                  <small>Nagar Nigam Dehradun (Ward 24 Lead)</small>
+                  <strong>Snehal Raj</strong>
+                  <small>Nagar Nigam Dehradun (Lead Ops)</small>
                 </div>
                 <span class="account-badge officer-color">Public Service</span>
               </div>
-              <p class="account-desc">Ward Engineer (Roads & MDDA Liaison). Authority to dispatch asphalt repair crews.</p>
-            </div>
-
-            <!-- Public Service Account 2 -->
-            <div class="account-card" data-account-id="officer-priya">
-              <div class="account-card-header">
-                <span class="account-avatar officer-bg">PN</span>
-                <div>
-                  <strong>Priya Nambiar</strong>
-                  <small>Nagar Nigam Dehradun (SWM & Health)</small>
-                </div>
-                <span class="account-badge officer-color">Public Service</span>
-              </div>
-              <p class="account-desc">Superintendent of Sanitation. Authority to schedule compactor trucks.</p>
+              <p class="account-desc">Executive Engineer & Rapid Action Lead. Triage, crew dispatch & resolution authority.</p>
             </div>
           </div>
           

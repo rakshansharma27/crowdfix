@@ -51,7 +51,7 @@ CrowdFix is a **voice-first civic intelligence engine** that transforms spoken c
 ### 2. Explainable Duplicate Clustering Engine
 - Automatically aggregates multiple citizen voices reporting the same underlying civic problem into a single high-priority cluster.
 - Transparently displays **explainable criteria** to judges and public officers:
-  - *“Merged because Category (Road Safety), Landmark (Rajpur Road), and Proximity (~140m) matched.”*
+  - *"Merged because Category (Road Safety), Landmark (Rajpur Road), and Proximity (~140m) matched."*
 - Prevents civic ticket bloat while boosting urgent community pressure scores.
 
 ### 3. OpenStreetMap + Nominatim Reverse Geocoding & Leaflet Heatmap
@@ -65,13 +65,41 @@ CrowdFix is a **voice-first civic intelligence engine** that transforms spoken c
 ### 5. Multi-Persona Experience (Resident vs. Officer)
 - **Resident Mode:** File spoken reports, corroborate ongoing clusters (`+1 Add My Voice`), share evidence to WhatsApp, or export PDF dossiers.
 - **Public-Service Team Mode (Nagar Nigam Dehradun):** Review citizen audio transcripts, inspect clustering criteria, update status (`Open` → `In Progress` → `Resolved`), and log verified repair notes.
-- **Authentic Account Switcher:** 1-Click switching between verified civic identities (*Rakshan Sharma*, *Ananya Rao*, *Er. Suresh Kumar*, *Priya Nambiar*).
+- **Authentic Account Switcher:** 1-Click switching between verified civic identities (*Rakshan Sharma*, *Arav Sharma*, *Snehal Raj*).
 
-### 6. Production & Open-Source Integrations
+### 6. Guest Browsing & Auth Access Control
+- **Anyone can browse** the live map, issue clusters, reports feed, and resolved archive without creating an account.
+- **Protected actions require login:** Filing a report, corroborating an issue (`+1`), and officer status updates are all auth-gated.
+- Auth modal opens automatically when a guest attempts a protected action, with a contextual subtitle explaining why login is needed.
+- Auth form inputs are blank by default — no autofill or hardcoded identity.
+
+### 7. Modern UI / UX Design System (v2.0)
+- **Glassmorphic sticky topbar:** `backdrop-filter: blur(20px)` frosted glass header pinned to the top while scrolling.
+- **Scroll reveal animations:** `IntersectionObserver`-powered entrance animations — cards, stat blocks, and feed items fade and slide in as they enter the viewport, with stagger delays for sequential reveal.
+- **Micro-interactions everywhere:** Button shimmer sweep on hover, icon spin on stat cards, sidebar nav slide-in, issue row slide-right, cluster card lift with gradient overlay reveal, close button rotate-on-hover.
+- **Floating hero orbit:** Animated floating nodes with staggered `float` keyframes.
+- **Gradient design language:** Linear gradient buttons, gradient top-border reveal on card hover, gradient pressure bar fill (`purple → orange`), gradient hero background with ambient radial glow layers.
+- **Glassmorphic modals:** `backdrop-filter: blur(10px)` overlay, `modalIn` scale+translateY entrance animation, rounded `28px` corners.
+- **Custom scrollbar:** 5px thin scrollbar with rounded thumb matching the design system.
+- **Full responsiveness:** Breakpoints at 1100px, 960px (mobile nav), 640px (single-column), 400px (micro screens).
+
+### 8. Production & Open-Source Integrations
 - **Web Push Notifications (`sw.js`):** Service Worker-based browser alerts when nearby issues are corroborated or resolved.
 - **Authentication:** Clerk Google OAuth button integration.
 - **Realtime Sync:** PocketBase integration status indicator.
 - **Visual Evidence:** Photo/camera capture placeholder with EXIF GPS sanitization container (*Coming Soon in v2*).
+
+---
+
+## 👥 Demo Accounts
+
+| Name | Role | Email | Area |
+|------|------|-------|------|
+| Rakshan Sharma | Resident | rakshan.sharma@gmail.com | Rajpur Road, Dehradun |
+| Arav Sharma | Resident | arav.sharma@outlook.com | Ballupur Chowk, Dehradun |
+| Snehal Raj | Officer (Nagar Nigam) | snehal.raj@nagarnigamdehradun.gov.in | Civic Works & SWM |
+
+> Log in with any of the above accounts via the **Sign In** button. Guests can browse the full map and reports feed without logging in.
 
 ---
 
@@ -103,7 +131,7 @@ Open `http://localhost:3434` in Google Chrome or Microsoft Edge for microphone a
 
 ## 🧪 Automated Testing & Verification
 
-CrowdFix includes an automated node test suite verifying all UI components, NLP parsers, clustering algorithms, state logic, and event wiring:
+CrowdFix includes an automated Node.js test suite verifying all UI components, NLP parsers, clustering algorithms, state logic, event wiring, auth guards, and guest browsing controls:
 
 ```bash
 node test_crowdfix.js
@@ -112,10 +140,32 @@ node test_crowdfix.js
 **Test Results:**  
 ```
 ────────────────────────────────────────────────────────────
-RESULTS: 239 passed, 0 failed
+RESULTS: 246 passed, 0 failed
 🎉 All tests passed! CrowdFix is demo-ready.
 ────────────────────────────────────────────────────────────
 ```
+
+### Test Coverage Areas
+| Suite | Tests |
+|-------|-------|
+| HTML Structure & Accessibility | IDs, ARIA, semantic elements |
+| CSS Critical Classes | All component classes present |
+| Speechmatics HUD & Language | Streaming, confidence, Hinglish |
+| Civic Evidence Parser | 12 English & Hinglish scenarios |
+| Explainable Clustering Logic | 6 merge/create scenarios |
+| Stats & State Logic | Formulas, edge cases |
+| P2: Pressure Score | 6 voice-count scenarios |
+| P2: Resolution Estimate | 4 scenarios + render check |
+| P2: SLA Countdown | Recent/breached/cleared |
+| P2: WhatsApp Share | URL, tab, content |
+| Keyboard Shortcuts | R key, Escape, input guards |
+| Mobile Navigation | Hamburger, overlay, slide-in |
+| Share & Export | `navigator.share`, PDF toast |
+| Empty States | All 4 views |
+| Dynamic Timestamps | `timeAgo`, auto-refresh |
+| Seed Data Integrity | 3 issues, testimonies |
+| Realism (Maps, Auth, Photos) | Nominatim, Clerk, PocketBase, heatmap |
+| Guest Browsing & Auth Guards | 7 access-control scenarios |
 
 ---
 
@@ -123,11 +173,11 @@ RESULTS: 239 passed, 0 failed
 
 ```
 crowdfix-prototype/
-├── index.html          # Semantic HTML5 single-page application shell & modals
-├── styles.css          # Modern responsive CSS (Space Grotesk + DM Sans, glassmorphism)
-├── app.js              # Speechmatics telemetry, Civic Parser, Clustering Engine & Automation
+├── index.html          # Semantic HTML5 SPA shell — guest/auth state, modals, scroll-reveal classes
+├── styles.css          # Modern Design System v2.0 — glassmorphism, scroll animations, micro-interactions
+├── app.js              # Speechmatics telemetry, Civic Parser, Clustering, Auth, Automation, Scroll Reveal
 ├── sw.js               # Service worker for offline caching & Web Push notifications
-├── test_crowdfix.js    # Comprehensive test runner (239 tests covering all logic)
+├── test_crowdfix.js    # Comprehensive test runner (246 tests covering all logic & UI)
 └── README.md           # Documentation, architecture & presentation guide
 ```
 
@@ -138,3 +188,9 @@ crowdfix-prototype/
 1. **Speechmatics-First:** Voice isn't just an input method — it is the bridge that empowers non-technical citizens and two-wheeler commuters to report problems in seconds.
 2. **Explainability Over Black Boxes:** Both citizens and municipal officers see *why* issues are merged and *how* priority scores are computed.
 3. **Closing the Loop:** Transparent public accountability transforms passive complaining into collective civic action.
+4. **Open by Default:** Anyone can browse the live civic map and evidence feed without an account — lowering the barrier to public engagement.
+5. **Modern & Accessible:** A production-grade UI/UX with glassmorphism, scroll animations, full responsiveness, and keyboard navigation support.
+
+---
+
+*Built with ❤️ for Dehradun · Powered by Speechmatics, Leaflet, OpenStreetMap & open web standards*
