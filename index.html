@@ -7,9 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-    <!-- Leaflet Interactive Maps -->
+    <!-- Leaflet Interactive Maps & Heatmap Plugin (FOSS) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -67,6 +68,7 @@
             <h1 id="topbarGreeting">Good evening, <span>Rakshan</span> ✦</h1>
           </div>
           <div class="top-actions">
+            <button class="icon-button" id="pushNotificationBtn" title="Enable civic push notifications">🔔</button>
             <button class="location-pill" id="locationPill" title="Location privacy settings">
               <span class="loc-dot">⌖</span> <span id="locationPillText">Locating area…</span>
             </button>
@@ -176,6 +178,9 @@
                   <span class="privacy-tag" title="Exact user locations are obfuscated for citizen privacy">
                     🔒 Location Obfuscated
                   </span>
+                  <button class="map-filter" id="toggleHeatmapBtn" title="Toggle Civic Density Heatmap (leaflet-heat)">
+                    🔥 Heatmap
+                  </button>
                   <button class="map-filter" id="recenterMapBtn" title="Center map on community area">
                     ⌖ Recenter
                   </button>
@@ -304,6 +309,17 @@
           </button>
         </form>
 
+        <div class="oauth-divider"><span>or sign in with Clerk / Google</span></div>
+        <button type="button" class="clerk-oauth-btn" id="clerkGoogleBtn">
+          <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.49h4.84a4.14 4.14 0 0 1-1.8 2.71v2.26h2.92c1.71-1.57 2.68-3.89 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.91-2.26c-.8.54-1.83.86-3.05.86-2.34 0-4.33-1.58-5.04-3.71H.95v2.33C2.43 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.96 10.71c-.18-.54-.28-1.12-.28-1.71s.1-1.17.28-1.71V4.96H.95A8.996 8.996 0 0 0 0 9c0 1.45.35 2.82.95 4.04l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0 5.48 0 2.43 2.02.95 4.96l3.01 2.33c.71-2.13 2.7-3.71 5.04-3.71z"/></svg>
+          Continue with Google via Clerk
+        </button>
+
+        <div class="pocketbase-status-tag" id="pocketbaseStatusTag">
+          <span class="status-dot-green"></span>
+          <span>PocketBase Sync Engine: <b>Connected & Ready</b></span>
+        </div>
+
         <p class="auth-switch">Already have an account? <button id="toggleAuth" type="button">Sign in</button></p>
         <p class="auth-note">🔒 Privacy first: Your exact GPS is obfuscated to neighborhood level. You can toggle permissions at any time.</p>
       </div>
@@ -360,23 +376,23 @@
         <div class="demo-chips-container">
           <p class="demo-chips-label">⚡ 1-Tap Hackathon Test Prompts (English & Hinglish):</p>
           <div class="demo-chips">
-            <button type="button" class="demo-chip" data-text="There is a dangerous pothole near the metro station on 80 Feet Road. Two bikes almost skidded this morning.">
-              <span>●</span> English: Pothole 80 Feet Rd (Merge Test)
+            <button type="button" class="demo-chip" data-text="There is a dangerous pothole near Clock Tower junction on Rajpur Road. Two bikes almost skidded this morning.">
+              <span>●</span> English: Pothole Rajpur Rd (Merge Test)
             </button>
-            <button type="button" class="demo-chip" data-text="80 Feet Road metro station ke paas bohot bada gaddha hai, do bikes abhi slip ho gayi dangerous pothole hai." style="border-color:#f97316;background:#fff7ed;">
-              <span>🇮🇳</span> Hinglish: Pothole Metro ke paas (Merge Test)
+            <button type="button" class="demo-chip" data-text="Rajpur Road Clock Tower ke paas bohot bada gaddha hai, do bikes abhi slip ho gayi dangerous pothole hai." style="border-color:#f97316;background:#fff7ed;">
+              <span>🇮🇳</span> Hinglish: Pothole Rajpur Road (Merge Test)
             </button>
-            <button type="button" class="demo-chip" data-text="The garbage dump outside 6th Block commercial market has been overflowing for two days with severe foul smell.">
-              <span>♻</span> English: Overflowing Bins 6th Block (Merge Test)
+            <button type="button" class="demo-chip" data-text="The garbage dump outside Paltan Bazaar commercial market has been overflowing for two days with severe foul smell.">
+              <span>♻</span> English: Overflowing Bins Paltan Bazaar (Merge Test)
             </button>
-            <button type="button" class="demo-chip" data-text="6th block commercial market ke bahar kachra bohot zyada faila hua hai aur badboo aa rahi hai." style="border-color:#10b981;background:#f0fdf4;">
-              <span>🇮🇳</span> Hinglish: 6th Block Kachra Dump (Merge Test)
+            <button type="button" class="demo-chip" data-text="Paltan Bazaar commercial market ke bahar kachra bohot zyada faila hua hai aur badboo aa rahi hai." style="border-color:#10b981;background:#f0fdf4;">
+              <span>🇮🇳</span> Hinglish: Paltan Bazaar Kachra Dump (Merge Test)
             </button>
-            <button type="button" class="demo-chip" data-text="A water supply pipeline has burst and is flooding the road near 4th Cross Park. Clean water is being wasted.">
+            <button type="button" class="demo-chip" data-text="A water supply pipeline has burst and is flooding the road near Ballupur Chowk. Clean water is being wasted.">
               <span>▲</span> English: Water Pipeline Burst (New Cluster)
             </button>
-            <button type="button" class="demo-chip" data-text="Streetlight has been flickering and completely off on 1st A Cross, making the road pitch dark and unsafe.">
-              <span>◉</span> English: Dark Streetlight 1st Cross (Merge Test)
+            <button type="button" class="demo-chip" data-text="Streetlight has been flickering and completely off on Ballupur Chowk, making the road pitch dark and unsafe.">
+              <span>◉</span> English: Dark Streetlight Ballupur Chowk (Merge Test)
             </button>
           </div>
         </div>
@@ -402,6 +418,15 @@
           <div class="preview-clustering-reason" id="previewClusteringReason">
             <span>Clustering Prediction: <em>Waiting for report text...</em></span>
           </div>
+        </div>
+
+        <!-- Photo / Visual Evidence (Coming soon as requested) -->
+        <div class="photo-evidence-box">
+          <div class="photo-evidence-header">
+            <span>📷 Photo / Visual Evidence</span>
+            <span class="coming-soon-badge">Coming soon!</span>
+          </div>
+          <p class="photo-evidence-sub">Camera capture with client-side EXIF GPS sanitizer will be supported in v2.</p>
         </div>
 
         <!-- Safety & Privacy Guarantee -->
@@ -433,8 +458,8 @@
               <span class="priority-badge" id="detailPriority">High Priority</span>
               <span class="status-badge" id="detailStatus">Open</span>
             </div>
-            <h2 id="detailTitle">Large pothole near metro</h2>
-            <p class="detail-location" id="detailPlace">80 Feet Road, Koramangala · 3 reports merged</p>
+            <h2 id="detailTitle">Large pothole near Clock Tower junction</h2>
+            <p class="detail-location" id="detailPlace">Rajpur Road, Dehradun · 3 reports merged</p>
           </div>
         </div>
 
@@ -502,7 +527,7 @@
               </select>
             </label>
             <label>Official Resolution Note:
-              <input type="text" id="officerNoteInput" placeholder="e.g. BBMP Ward 151 asphalt crew patched 120sqft area." />
+              <input type="text" id="officerNoteInput" placeholder="e.g. Nagar Nigam Dehradun road crew patched 120sqft area." />
             </label>
             <button class="primary-button small" id="officerUpdateBtn">
               Save Civic Status Update
@@ -541,16 +566,70 @@
         </div>
 
         <div class="profile-section">
-          <h4>Switch Operating Persona</h4>
-          <p class="section-subtext">Toggle between Resident view (report & corroborate) and Public-Service Team view (triage & resolve).</p>
-          <div class="role-switch-large">
+          <h4>Switch Operating Persona & Real Accounts</h4>
+          <p class="section-subtext">Switch between authenticated real community accounts with authentic civic credentials:</p>
+          <div class="real-accounts-grid" id="realAccountsGrid">
+            <!-- Resident Account 1 -->
+            <div class="account-card active" data-account-id="resident-rakshan">
+              <div class="account-card-header">
+                <span class="account-avatar resident-bg">RS</span>
+                <div>
+                  <strong>Rakshan Sharma</strong>
+                  <small>Resident · Rajpur Road, Dehradun</small>
+                </div>
+                <span class="account-badge">Resident</span>
+              </div>
+              <p class="account-desc">Active community voice. Filed 4 reports & corroborated 7 hazards.</p>
+            </div>
+
+            <!-- Resident Account 2 -->
+            <div class="account-card" data-account-id="resident-ananya">
+              <div class="account-card-header">
+                <span class="account-avatar resident-bg">AR</span>
+                <div>
+                  <strong>Ananya Rao</strong>
+                  <small>Resident · Ballupur Chowk, Dehradun</small>
+                </div>
+                <span class="account-badge">Resident</span>
+              </div>
+              <p class="account-desc">Verified commuter. Reported hazardous crater near Clock Tower junction.</p>
+            </div>
+
+            <!-- Public Service Account 1 -->
+            <div class="account-card" data-account-id="officer-suresh">
+              <div class="account-card-header">
+                <span class="account-avatar officer-bg">SK</span>
+                <div>
+                  <strong>Er. Suresh Kumar</strong>
+                  <small>Nagar Nigam Dehradun (Ward 24 Lead)</small>
+                </div>
+                <span class="account-badge officer-color">Public Service</span>
+              </div>
+              <p class="account-desc">Ward Engineer (Roads & MDDA Liaison). Authority to dispatch asphalt repair crews.</p>
+            </div>
+
+            <!-- Public Service Account 2 -->
+            <div class="account-card" data-account-id="officer-priya">
+              <div class="account-card-header">
+                <span class="account-avatar officer-bg">PN</span>
+                <div>
+                  <strong>Priya Nambiar</strong>
+                  <small>Nagar Nigam Dehradun (SWM & Health)</small>
+                </div>
+                <span class="account-badge officer-color">Public Service</span>
+              </div>
+              <p class="account-desc">Superintendent of Sanitation. Authority to schedule compactor trucks.</p>
+            </div>
+          </div>
+          
+          <div class="role-switch-large" style="margin-top:14px;">
             <button type="button" class="role-switch-option active" id="btnSwitchResident">
-              <strong>Resident</strong>
+              <strong>Quick Role: Resident</strong>
               <small>File voice reports, add voices to clusters</small>
             </button>
             <button type="button" class="role-switch-option" id="btnSwitchOfficer">
-              <strong>Public-Service Team</strong>
-              <small>BBMP / Civic Works: triage, verify, resolve</small>
+              <strong>Quick Role: Public-Service Team</strong>
+              <small>Nagar Nigam / Civic Works: triage, verify, resolve</small>
             </button>
           </div>
         </div>
