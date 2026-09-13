@@ -180,17 +180,6 @@ crowdfix-prototype/
 ├── test_crowdfix.js    # Comprehensive test runner (246 tests covering all logic & UI)
 └── README.md           # Documentation, architecture & presentation guide
 ```
-
----
-
-## 🏆 Hackathon Pitch Highlights
-
-1. **Speechmatics-First:** Voice isn't just an input method — it is the bridge that empowers non-technical citizens and two-wheeler commuters to report problems in seconds.
-2. **Explainability Over Black Boxes:** Both citizens and municipal officers see *why* issues are merged and *how* priority scores are computed.
-3. **Closing the Loop:** Transparent public accountability transforms passive complaining into collective civic action.
-4. **Open by Default:** Anyone can browse the live civic map and evidence feed without an account — lowering the barrier to public engagement.
-5. **Modern & Accessible:** A production-grade UI/UX with glassmorphism, scroll animations, full responsiveness, and keyboard navigation support.
-
 ---
 
 *Built with ❤️ for Dehradun · Powered by Speechmatics, Leaflet, OpenStreetMap & open web standards*
